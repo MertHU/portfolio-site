@@ -86,7 +86,7 @@ Bij het maken of aanpassen van UI op deze site altijd deze skills/tools inzetten
 - 0-byte junkbestanden in root (`376`, `gooWordsByLang[lang]`) verwijderen, Mert moet nog akkoord geven
 - EventKit-screenshot: screen-calender.png is een ChoreShare-screenshot, echte EventKit-screenshot nodig
 - css/style.css en js/main.js (V2-restanten) verwijderen
-- Git: lokale repo aangemaakt en eerste commit gedaan (16 jul). Junkbestanden (376, gooWordsByLang[lang]) staan in .gitignore tot Mert akkoord geeft op verwijderen. NOG TE DOEN: repo op GitHub (MertHU) aanmaken en pushen; gh CLI is niet geinstalleerd, dus Mert moet dit zelf doen of gh installeren (instructies in de sessie van 16 jul gegeven)
+- Git: KLAAR (16 jul). Publieke repo https://github.com/MertHU/portfolio-site, main branch gepusht. gh CLI geinstalleerd en ingelogd als MertHU, dus committen en pushen kan voortaan gewoon vanuit de sessie. Junkbestanden (376, gooWordsByLang[lang]) staan in .gitignore tot Mert akkoord geeft op verwijderen. Werkafspraak: git status checken voor elke commit, nooit blind git add -A
 - Deploy naar Vercel, domein kiezen
 - NA DE LAUNCH (afspraak 16 jul): v2-migratie naar Next.js. Besluit: eerst afmaken en shippen in vanilla (smoothness komt van GSAP, niet van het framework), daarna migreren voor de voordelen die dan wel tellen: CV-waarde richting stages (React/Next op het portfolio zelf), ruimte voor meer pagina's/routes (blog, cases, CMS), SEO over meerdere routes, next/image optimalisatie. Let op bij migratie: alle imperatieve GSAP-code (wipe, pixel trail, dock-magnificatie, parallax) moet naar refs + useEffect met cleanup
 - Check of mertanil_61@outlook.com het adres is dat Mert zakelijk wil gebruiken

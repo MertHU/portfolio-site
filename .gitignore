@@ -1,0 +1,11 @@
+# 0-byte junkbestanden uit eerdere sessies (verwijderen wacht op Merts akkoord, zie CLAUDE.md)
+376
+gooWordsByLang\[lang\]
+
+# Windows/OneDrive
+desktop.ini
+Thumbs.db
+
+# lokale tooling
+.claude/
+.gstack/

@@ -1,0 +1,892 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Mert Altintas — Freelance Designer & Developer</title>
+<meta name="description" content="Freelance designer en developer uit Arnhem. Ik ontwerp en bouw apps en websites. Van eerste schets tot live product." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,600;12..96,700;12..96,800&family=Instrument+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet" />
+<style>
+  /* ===== Brand tokens ===== */
+  /* ┌─────────────────────────────────────────────────────────────┐
+     │ PALETTE GRADER — swap ONLY this block to test a colour set.  │
+     └─────────────────────────────────────────────────────────────┘ */
+  :root {
+    /* —— palette: Petrol Teal + Warm Cream + Amber —— */
+    --primary: #157A6E;
+    --deep:    #0B4A43;
+    --second:  #BFE3DC;
+    --ink:     #22272B;
+    --bg:      #F7F5F0;
+    --accent:  #F0A84B;
+    --brand-rgb:  21,122,110;
+    --brand2-rgb: 11,74,67;
+    --accent-rgb: 240,168,75;
+    /* ——————————————————————————————————————————————————————————— */
+
+    --muted: #5F6B6A;
+    --hairline: #E8EFEA;
+    --cream: #F6F1E4;
+    --shadow-deep: 0 18px 50px -18px rgba(11, 74, 67, 0.4);
+    --shadow-soft: 0 10px 34px -14px rgba(11, 74, 67, 0.18);
+    --r: 18px;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; overflow-x: clip; }
+  html.lenis, html.lenis body { height: auto; }
+  html.lenis { scroll-behavior: auto; }
+  .lenis.lenis-smooth { scroll-behavior: auto !important; }
+
+  body {
+    font-family: "Instrument Sans", sans-serif;
+    color: var(--ink);
+    background: var(--bg);
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  h1, h2, h3, .display { font-family: "Bricolage Grotesque", sans-serif; }
+
+  ::selection { background: var(--second); color: var(--deep); }
+  a:focus-visible, button:focus-visible { outline: 2px solid var(--primary); outline-offset: 3px; border-radius: 4px; }
+
+  /* ===== Anti-flash ===== */
+  .gsap-init [data-hero],
+  .gsap-init [data-reveal] { opacity: 0; }
+  .gsap-init .hero-name .word { opacity: 0; }
+
+  /* ===== Scroll-voortgangsbalk ===== */
+  .progress {
+    position: fixed; top: 0; left: 0; height: 3px; width: 100%;
+    background: var(--primary); transform: scaleX(0); transform-origin: left center;
+    z-index: 999; will-change: transform;
+  }
+
+  /* ===== Achtergrond: glow + grain + drijvende vormen (Shape Landing Hero-patroon) ===== */
+  .bg-grad {
+    position: fixed; inset: 0; z-index: -4; pointer-events: none;
+    background:
+      radial-gradient(2000px 2300px at 50% -640px, rgba(var(--brand-rgb),0.2), rgba(var(--brand-rgb),0) 80%),
+      var(--bg);
+  }
+  .grain {
+    position: fixed; inset: 0; z-index: -1; pointer-events: none; opacity: 0.45;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3CfeColorMatrix type='matrix' values='0 0 0 0 0.12 0 0 0 0 0.07 0 0 0 0 0.27 0 0 0 0.025 0'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+  .shapes { position: fixed; inset: 0; z-index: -2; overflow: hidden; pointer-events: none; }
+  .shape {
+    position: absolute; border-radius: 50%;
+    filter: blur(70px); opacity: 0.32; will-change: transform;
+  }
+  .shape.s1 { width: 520px; height: 520px; top: -160px; right: -140px; background: rgba(var(--brand-rgb),0.5); }
+  .shape.s2 { width: 420px; height: 420px; left: -160px; top: 34%; background: rgba(var(--accent-rgb),0.42); }
+  .shape.s3 { width: 460px; height: 460px; right: -120px; top: 68%; background: rgba(var(--brand2-rgb),0.4); }
+  .shape.s4 { width: 260px; height: 260px; left: 18%; top: 82%; background: rgba(var(--brand-rgb),0.32); }
+
+  .wrap { max-width: 1120px; margin: 0 auto; padding: 0 24px; }
+
+  /* ===== Navbar ===== */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 50;
+    transition: opacity 0.45s ease, transform 0.45s ease;
+  }
+  nav.nav-hidden { opacity: 0; transform: translateY(-130%); pointer-events: none; }
+  .nav-inner { display: flex; align-items: center; justify-content: space-between; height: 68px; }
+  .brand { display: flex; align-items: center; gap: 11px; text-decoration: none; color: var(--ink); }
+  .brand-mark {
+    width: 38px; height: 38px; flex: none; border-radius: 11px;
+    background: var(--primary); color: var(--cream);
+    display: grid; place-items: center;
+    font-family: "Bricolage Grotesque", sans-serif; font-weight: 800; font-size: 16px;
+    letter-spacing: -0.02em;
+    box-shadow: 0 8px 20px -8px rgba(var(--brand2-rgb),0.6);
+  }
+  .brand-name { font-family: "Bricolage Grotesque", sans-serif; font-weight: 700; font-size: 19px; letter-spacing: -0.02em; }
+  .brand-name .bn-last { color: var(--primary); }
+
+  .nav-right { display: flex; align-items: center; gap: 16px; }
+  .lang { display: inline-flex; align-items: center; gap: 2px; font-size: 13.5px; font-weight: 600; }
+  .lang button {
+    font: inherit; background: none; border: 0; color: var(--muted);
+    padding: 6px 5px; cursor: pointer; transition: color 0.2s;
+  }
+  .lang button:hover { color: var(--ink); }
+  .lang button[aria-pressed="true"] { color: var(--primary); text-decoration: underline; text-underline-offset: 4px; }
+
+  .ghost-pill {
+    position: relative; display: inline-flex; align-items: center; gap: 7px;
+    font-size: 13.5px; font-weight: 600; color: var(--primary);
+    padding: 9px 16px; border-radius: 999px; background: #fff;
+    text-decoration: none; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s;
+    box-shadow: 0 6px 20px -8px rgba(var(--brand2-rgb),0.4), 0 1px 3px rgba(11,74,67,0.08);
+  }
+  .ghost-pill::before {
+    content: ""; position: absolute; inset: 0; border-radius: 999px; padding: 2px;
+    background: var(--primary);
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor; mask-composite: exclude;
+  }
+  .ghost-pill:hover { transform: translateY(-1px); box-shadow: 0 10px 26px -8px rgba(var(--brand2-rgb),0.5); }
+
+  /* ===== Hero: tekst links, portret-cutout rechts ===== */
+  .hero {
+    position: relative; min-height: 100svh;
+    display: grid; align-items: center; padding: 110px 0 40px;
+  }
+  .hero-grid {
+    display: grid; grid-template-columns: 1.15fr 0.85fr; gap: 40px; align-items: center;
+  }
+  .hero-eyebrow {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-size: 13px; font-weight: 600; letter-spacing: 0.04em;
+    color: var(--deep); background: var(--second);
+    padding: 7px 14px; border-radius: 999px; margin-bottom: 24px;
+  }
+  .hero-eyebrow .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--primary); animation: pulse 2.4s ease-in-out infinite; }
+  @keyframes pulse { 0%,100% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.5); opacity: 0.55; } }
+
+  .hero-name {
+    font-family: "Bricolage Grotesque", sans-serif; font-weight: 800;
+    font-size: clamp(52px, 8.5vw, 104px); letter-spacing: -0.035em; line-height: 0.98;
+    color: var(--ink);
+  }
+  .hero-name .word { display: inline-block; will-change: transform, filter, opacity; }
+  .hero-name .word:last-child { color: var(--primary); }
+
+  /* gooey morphing woord (21st.dev Gooey Text Morphing) */
+  .gooey-row {
+    display: flex; align-items: baseline; gap: 14px; margin-top: 18px;
+    font-family: "Bricolage Grotesque", sans-serif; font-weight: 700;
+    font-size: clamp(22px, 3vw, 34px); letter-spacing: -0.02em; color: var(--muted);
+  }
+  .gooey { position: relative; display: inline-block; height: 1.2em; min-width: 7ch; }
+  .goo-stage { position: absolute; inset: 0; display: flex; align-items: center; filter: url(#threshold); }
+  .goo-text {
+    position: absolute; left: 0; top: 50%; transform: translateY(-50%);
+    font-weight: 800; letter-spacing: -0.03em; line-height: 1; white-space: nowrap; color: var(--primary);
+  }
+  .svg-goo { position: absolute; width: 0; height: 0; }
+
+  .hero-sub {
+    max-width: 42ch; margin: 24px 0 32px;
+    font-size: 18px; line-height: 1.6; color: var(--muted);
+  }
+  .cta-row { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+  .btn-grad {
+    display: inline-flex; align-items: center; gap: 9px;
+    background: var(--primary); color: var(--cream); text-decoration: none;
+    font-weight: 600; font-size: 15.5px; padding: 15px 26px; border-radius: 15px;
+    box-shadow: var(--shadow-deep); cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.25s;
+  }
+  .btn-grad:hover { transform: translateY(-2px); box-shadow: 0 24px 56px -18px rgba(11,74,67,0.5); }
+  .btn-grad:active { transform: translateY(0); }
+  .btn-grad svg { transition: transform 0.25s; }
+  .btn-grad:hover svg { transform: translateX(4px); }
+  .cta-note { font-size: 13.5px; color: var(--muted); }
+
+  /* portret-cutout op organische vorm */
+  .hero-visual { position: relative; display: flex; justify-content: center; align-items: flex-end; }
+  .portrait-blob {
+    position: absolute; bottom: 0; left: 50%; transform: translateX(-50%);
+    width: min(88%, 380px); aspect-ratio: 1;
+    background: linear-gradient(150deg, var(--primary), var(--deep));
+    border-radius: 46% 54% 52% 48% / 58% 52% 48% 42%;
+    box-shadow: var(--shadow-deep);
+  }
+  .portrait-blob::after {
+    content: ""; position: absolute; inset: -14px;
+    border-radius: inherit; border: 1.5px dashed rgba(var(--brand-rgb),0.35);
+  }
+  .hero-portrait {
+    position: relative; z-index: 1; width: min(78%, 330px); height: auto;
+    filter: drop-shadow(0 24px 40px rgba(11,74,67,0.35));
+    will-change: transform;
+  }
+
+  /* scroll-hint */
+  .scroll-hint {
+    position: absolute; bottom: 22px; left: 50%; transform: translateX(-50%);
+    display: flex; flex-direction: column; align-items: center; gap: 7px; z-index: 5;
+    font-size: 12px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted);
+  }
+  .scroll-hint .mouse {
+    width: 22px; height: 34px; border: 2px solid rgba(95,107,106,0.5); border-radius: 12px;
+    display: flex; justify-content: center; padding-top: 6px;
+  }
+  .scroll-hint .wheel { width: 3px; height: 7px; border-radius: 2px; background: var(--muted); animation: wheel 1.6s ease-in-out infinite; }
+  @keyframes wheel { 0% { opacity: 0; transform: translateY(-3px); } 40% { opacity: 1; } 100% { opacity: 0; transform: translateY(7px); } }
+
+  /* ===== Secties ===== */
+  section { padding: 96px 0; position: relative; }
+  .sec-head { max-width: 560px; margin-bottom: 48px; }
+  .sec-eyebrow {
+    font-size: 12.5px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--primary); margin-bottom: 12px; display: inline-flex; align-items: center; gap: 9px;
+  }
+  .sec-eyebrow::before { content: ""; width: 22px; height: 2px; border-radius: 2px; background: var(--primary); }
+  h2 { font-size: clamp(28px, 4vw, 40px); font-weight: 700; letter-spacing: -0.025em; line-height: 1.12; margin-bottom: 14px; }
+  .sec-head p { color: var(--muted); font-size: 16.5px; line-height: 1.65; }
+
+  /* ===== Over mij ===== */
+  .about-grid { display: grid; grid-template-columns: 1.3fr 1fr; gap: 60px; align-items: start; }
+  .about-copy p { color: var(--muted); font-size: 17px; line-height: 1.7; }
+  .about-copy p + p { margin-top: 16px; }
+  .about-copy p:first-of-type { color: var(--ink); font-size: 18.5px; }
+  .about-chips { display: flex; flex-wrap: wrap; gap: 10px; align-content: flex-start; }
+  .chip {
+    font-size: 13.5px; font-weight: 600; padding: 9px 15px; border-radius: 999px;
+    background: #fff; border: 1px solid var(--hairline); color: var(--deep);
+    box-shadow: var(--shadow-soft);
+  }
+  .chip.accent { background: var(--second); border-color: transparent; }
+
+  /* ===== Werk: cards met placeholders ===== */
+  .work-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+  .work-card {
+    display: flex; flex-direction: column; text-decoration: none; color: inherit;
+    background: #fff; border: 1px solid var(--hairline); border-radius: var(--r);
+    overflow: hidden; box-shadow: var(--shadow-soft);
+    transition: transform 0.25s ease, box-shadow 0.25s ease; cursor: pointer;
+  }
+  .work-card:hover { transform: translateY(-6px); box-shadow: var(--shadow-deep); }
+  .ph {
+    aspect-ratio: 4 / 3; display: grid; place-items: center; position: relative; overflow: hidden;
+  }
+  .ph-1 { background: linear-gradient(150deg, var(--primary), var(--deep)); }
+  .ph-2 { background: linear-gradient(150deg, var(--accent), #C77E23); }
+  .ph-3 { background: linear-gradient(150deg, #3D6B64, #22443F); }
+  .ph::before {
+    content: ""; position: absolute; inset: 0; opacity: 0.14;
+    background-image: repeating-linear-gradient(45deg, #fff 0 2px, transparent 2px 14px);
+  }
+  .ph b {
+    font-family: "Bricolage Grotesque", sans-serif; font-weight: 800;
+    font-size: 44px; letter-spacing: -0.03em; color: rgba(255,255,255,0.95); z-index: 1;
+  }
+  .ph .ph-note {
+    position: absolute; bottom: 12px; left: 50%; transform: translateX(-50%);
+    font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase;
+    color: rgba(255,255,255,0.75); background: rgba(0,0,0,0.18);
+    padding: 5px 11px; border-radius: 999px; white-space: nowrap; z-index: 1;
+  }
+  .work-body { padding: 22px 22px 24px; display: flex; flex-direction: column; gap: 8px; flex: 1; }
+  .work-body h3 { font-size: 21px; letter-spacing: -0.01em; }
+  .work-body .work-desc { font-size: 14.5px; line-height: 1.6; color: var(--muted); flex: 1; }
+  .work-meta {
+    display: flex; justify-content: space-between; align-items: center; gap: 10px;
+    padding-top: 14px; border-top: 1px solid var(--hairline);
+    font-size: 12.5px; font-weight: 600; color: var(--muted);
+  }
+  .work-meta .tag { color: var(--primary); }
+  .work-meta .ext { display: inline-flex; align-items: center; gap: 5px; color: var(--primary); }
+
+  /* ===== Zo werk ik ===== */
+  .steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+  .step { position: relative; padding: 30px 24px; background: #fff; border: 1px solid var(--hairline); border-radius: var(--r); box-shadow: var(--shadow-soft); }
+  .step-num {
+    width: 42px; height: 42px; border-radius: 13px; background: var(--primary);
+    color: var(--cream); display: grid; place-items: center;
+    font-family: "Bricolage Grotesque", sans-serif; font-weight: 700; font-size: 18px;
+    margin-bottom: 18px; box-shadow: 0 8px 20px -8px rgba(var(--brand2-rgb),0.5);
+  }
+  .step h3 { font-size: 18px; margin-bottom: 8px; letter-spacing: -0.01em; }
+  .step p { font-size: 14.5px; line-height: 1.6; color: var(--muted); }
+
+  /* ===== Afsluit-CTA ===== */
+  .cta-sec { padding: 30px 0 100px; }
+  .cta-card {
+    position: relative; overflow: hidden; border-radius: 28px;
+    background: linear-gradient(140deg, var(--primary), var(--deep)); color: var(--cream); text-align: center;
+    padding: 72px 28px; box-shadow: var(--shadow-deep);
+  }
+  .cta-card::before, .cta-card::after {
+    content: ""; position: absolute; border-radius: 50%; border: 1.5px solid rgba(255,255,255,0.13);
+  }
+  .cta-card::before { width: 420px; height: 420px; top: -210px; right: -130px; }
+  .cta-card::after { width: 300px; height: 300px; bottom: -160px; left: -90px; }
+  .cta-card h2 { color: var(--cream); margin-bottom: 12px; }
+  .cta-card p { color: rgba(246,241,228,0.85); font-size: 16.5px; margin-bottom: 32px; }
+  .btn-white {
+    display: inline-flex; align-items: center; gap: 9px;
+    background: #fff; color: var(--primary); text-decoration: none;
+    font-weight: 700; font-size: 15.5px; padding: 15px 28px; border-radius: 15px;
+    box-shadow: 0 14px 36px -10px rgba(0,0,0,0.35); cursor: pointer;
+    transition: transform 0.2s;
+  }
+  .btn-white:hover { transform: translateY(-2px); }
+
+  /* ===== Footer ===== */
+  footer { background: var(--deep); color: rgba(255,255,255,0.66); padding: 56px 0 30px; position: relative; }
+  footer::before { content: ""; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: var(--primary); }
+  .foot-top { display: grid; grid-template-columns: 1.5fr 1fr 1fr 1fr; gap: 40px; }
+  .foot-brand { display: flex; align-items: center; gap: 10px; color: #fff; margin-bottom: 14px; }
+  .foot-brand .brand-mark { width: 32px; height: 32px; border-radius: 9px; font-size: 13px; }
+  .foot-brand b { font-family: "Bricolage Grotesque", sans-serif; font-size: 17px; }
+  .foot-tag { font-size: 13.5px; line-height: 1.6; max-width: 32ch; color: rgba(255,255,255,0.6); }
+  .foot-col { display: flex; flex-direction: column; gap: 10px; font-size: 13.5px; }
+  .foot-col b {
+    color: #fff; font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase;
+    margin-bottom: 4px; opacity: 0.85; font-weight: 700;
+  }
+  .foot-col a { color: rgba(255,255,255,0.66); text-decoration: none; transition: color 0.2s; }
+  .foot-col a:hover { color: var(--second); }
+  .foot-muted { color: rgba(255,255,255,0.45); font-size: 12.5px; line-height: 1.5; }
+  .foot-socials { display: flex; gap: 10px; margin-top: 2px; }
+  .soc {
+    width: 38px; height: 38px; border-radius: 50%; display: grid; place-items: center;
+    background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.14);
+    color: #fff; transition: background 0.2s, transform 0.2s, border-color 0.2s;
+  }
+  .soc:hover { background: rgba(255,255,255,0.14); transform: translateY(-2px); border-color: var(--second); }
+  .foot-bottom {
+    margin-top: 40px; padding-top: 22px; border-top: 1px solid rgba(255,255,255,0.1);
+    font-size: 12.5px; display: flex; justify-content: space-between; align-items: center;
+    flex-wrap: wrap; gap: 10px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation: none !important; transition: none !important; }
+  }
+
+  /* ===== Responsive ===== */
+  @media (max-width: 920px) {
+    .hero { padding-top: 100px; }
+    .hero-grid { grid-template-columns: 1fr; gap: 44px; text-align: center; }
+    .hero-grid > div:first-child { display: flex; flex-direction: column; align-items: center; }
+    .gooey-row { justify-content: center; }
+    .goo-text { left: 50%; transform: translate(-50%, -50%); }
+    .hero-sub { margin: 24px auto 32px; }
+    .cta-row { justify-content: center; }
+    .hero-visual { order: -1; margin-top: 8px; }
+    .hero-portrait { width: min(62%, 250px); }
+    .portrait-blob { width: min(72%, 290px); }
+    .shape { filter: blur(60px); opacity: 0.2; }
+    .about-grid { grid-template-columns: 1fr; gap: 36px; }
+    .work-grid { grid-template-columns: 1fr; }
+    .steps { grid-template-columns: 1fr; }
+    .foot-top { grid-template-columns: 1fr 1fr; gap: 32px; }
+  }
+  .pill-short { display: none; }
+  @media (max-width: 560px) {
+    .foot-top { grid-template-columns: 1fr; gap: 28px; }
+  }
+  @media (max-width: 480px) {
+    section { padding: 64px 0; }
+    .pill-long { display: none; }
+    .pill-short { display: inline; }
+    .ghost-pill { font-size: 12.5px; padding: 8px 13px; }
+    .hero-sub { font-size: 16.5px; }
+  }
+</style>
+<script>
+  if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    document.documentElement.classList.add("gsap-init");
+  }
+</script>
+</head>
+<body>
+
+<div class="progress" aria-hidden="true"></div>
+<div class="bg-grad" aria-hidden="true"></div>
+<div class="grain" aria-hidden="true"></div>
+
+<div class="shapes" aria-hidden="true">
+  <div class="shape s1" data-speed="0.06" data-drift="18"></div>
+  <div class="shape s2" data-speed="-0.05" data-drift="24"></div>
+  <div class="shape s3" data-speed="0.08" data-drift="20"></div>
+  <div class="shape s4" data-speed="-0.07" data-drift="14"></div>
+</div>
+
+<!-- ===== Navbar ===== -->
+<nav>
+  <div class="wrap nav-inner">
+    <a class="brand" href="#top" aria-label="Mert Altintas home">
+      <span class="brand-mark">MA</span>
+      <span class="brand-name">Mert <span class="bn-last">Altintas</span></span>
+    </a>
+    <div class="nav-right">
+      <div class="lang" role="group" aria-label="Taal / Language">
+        <button type="button" data-lang="nl" aria-pressed="true">NL</button>
+        <button type="button" data-lang="en" aria-pressed="false">EN</button>
+      </div>
+      <a class="ghost-pill" href="#contact">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+        <span class="pill-long" data-i18n="nav.pill">Neem contact op</span><span class="pill-short" data-i18n="nav.pillshort">Contact</span>
+      </a>
+    </div>
+  </div>
+</nav>
+
+<!-- ===== Hero ===== -->
+<header class="hero" id="top">
+  <div class="wrap hero-grid">
+    <div>
+      <span class="hero-eyebrow" data-hero><span class="dot"></span><span data-i18n="hero.eyebrow">Freelance Designer &amp; Developer</span></span>
+      <h1 class="hero-name" aria-label="Mert Altintas"><span class="word">Mert</span> <span class="word">Altintas</span></h1>
+      <div class="gooey-row" data-hero>
+        <span data-i18n="hero.goopre">Ik maak</span>
+        <span class="gooey" aria-label="websites, apps, interfaces">
+          <span class="goo-stage">
+            <span class="goo-text goo-1"></span>
+            <span class="goo-text goo-2"></span>
+          </span>
+        </span>
+      </div>
+      <p class="hero-sub" data-hero data-i18n="hero.sub">Ik ontwerp en bouw apps en websites. Van eerste schets tot live product.</p>
+      <div class="cta-row" data-hero>
+        <a class="btn-grad" href="#werk">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+          <span data-i18n="hero.cta">Bekijk mijn werk</span>
+        </a>
+        <span class="cta-note" data-i18n="hero.note">Gevestigd in Arnhem, NL</span>
+      </div>
+    </div>
+    <div class="hero-visual" data-hero>
+      <div class="portrait-blob" aria-hidden="true"></div>
+      <img class="hero-portrait" src="assets/portrait-cutout.png" alt="Mert Altintas" width="424" height="605" />
+    </div>
+  </div>
+
+  <div class="scroll-hint" data-hero aria-hidden="true">
+    <div class="mouse"><span class="wheel"></span></div>
+    <span data-i18n="hero.scroll">Scroll</span>
+  </div>
+</header>
+
+<!-- gooey-filter -->
+<svg class="svg-goo" aria-hidden="true" focusable="false">
+  <defs>
+    <filter id="threshold">
+      <feColorMatrix in="SourceGraphic" type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 255 -140" />
+    </filter>
+  </defs>
+</svg>
+
+<!-- ===== Over mij ===== -->
+<section id="over">
+  <div class="wrap">
+    <div class="sec-head" data-reveal>
+      <span class="sec-eyebrow" data-i18n="about.eyebrow">Over mij</span>
+      <h2 data-i18n="about.title">Ik ben Mert.</h2>
+    </div>
+    <div class="about-grid">
+      <div class="about-copy">
+        <p data-reveal data-i18n="about.p1">27, uit Arnhem. Ik begon met een MBO-opleiding applicatieontwikkeling en zit nu in mijn derde jaar HBO-ICT aan de Hogeschool Utrecht. Ik bouw met React Native, React en TypeScript, en ik ontwerp het liefst zelf wat ik daarna bouw.</p>
+        <p data-reveal data-i18n="about.p2">Naast mijn studie werk ik als freelance designer en developer. Ik maak websites voor ondernemers en bouw mijn eigen app, ChoreShare, een huishoud-app voor studentenhuizen die ik van nul heb opgezet.</p>
+        <p data-reveal data-i18n="about.p3">Waar ik naartoe werk: een developer zijn die je een probleem geeft en een afgemaakt product teruggeeft. Geen half werk, geen buzzwords. In mijn vrije tijd vind je me aan de boulderwand of achter een film.</p>
+      </div>
+      <div class="about-chips" data-reveal>
+        <span class="chip accent">React Native</span>
+        <span class="chip">React</span>
+        <span class="chip">TypeScript</span>
+        <span class="chip">Firebase</span>
+        <span class="chip">HTML &amp; CSS</span>
+        <span class="chip">JavaScript</span>
+        <span class="chip accent">UI-design</span>
+        <span class="chip">GSAP</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== Werk ===== -->
+<section id="werk">
+  <div class="wrap">
+    <div class="sec-head" data-reveal>
+      <span class="sec-eyebrow" data-i18n="work.eyebrow">Werk</span>
+      <h2 data-i18n="work.h">Recente projecten</h2>
+    </div>
+    <div class="work-grid">
+      <article class="work-card" data-reveal>
+        <div class="ph ph-1" aria-hidden="true"><b>CS</b><span class="ph-note" data-i18n="ph.note">Beeld volgt</span></div>
+        <div class="work-body">
+          <h3>ChoreShare</h3>
+          <p class="work-desc" data-i18n="w1.p">Huishoud-app voor studentenhuizen. Taken, gedeelde uitgaven en een huisagenda in één app. Van nul opgezet, ontwerp en code.</p>
+          <div class="work-meta"><span class="tag" data-i18n="w1.cat">App · Eigen product</span><span>2026</span></div>
+        </div>
+      </article>
+      <a class="work-card" href="https://choreshare.nl" target="_blank" rel="noopener" data-reveal>
+        <div class="ph ph-2" aria-hidden="true"><b>.NL</b><span class="ph-note" data-i18n="ph.note">Beeld volgt</span></div>
+        <div class="work-body">
+          <h3>ChoreShare.nl</h3>
+          <p class="work-desc" data-i18n="w2.p">Marketingsite voor de app: een one-pager met scroll-animaties, statisch gebouwd en dus snel en simpel te hosten.</p>
+          <div class="work-meta"><span class="tag" data-i18n="w2.cat">Website · Eigen product</span><span class="ext"><span data-i18n="w2.link">Bekijk live</span>
+            <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M2 14L14 2M5 2h9v9" /></svg>
+          </span></div>
+        </div>
+      </a>
+      <article class="work-card" data-reveal>
+        <div class="ph ph-3" aria-hidden="true"><b>EK</b><span class="ph-note" data-i18n="ph.note">Beeld volgt</span></div>
+        <div class="work-body">
+          <h3>EventKit</h3>
+          <p class="work-desc" data-i18n="w3.p">Festival-app, gebouwd in teamverband op de Hogeschool Utrecht. Frontend plus de gedeelde basis: thema's, taalwissel en toasts.</p>
+          <div class="work-meta"><span class="tag" data-i18n="w3.cat">App · Teamproject HU</span><span>2026</span></div>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ===== Zo werk ik ===== -->
+<section id="how">
+  <div class="wrap">
+    <div class="sec-head" data-reveal>
+      <span class="sec-eyebrow" data-i18n="steps.eyebrow">Zo werk ik</span>
+      <h2 data-i18n="steps.h">Van eerste schets tot live product</h2>
+    </div>
+    <div class="steps">
+      <article class="step" data-reveal>
+        <span class="step-num">1</span>
+        <h3 data-i18n="s1.t">Design</h3>
+        <p data-i18n="s1.p">Strak, functioneel design met oog voor typografie en detail. Geen templates: elk scherm op maat voor jouw merk en jouw gebruikers.</p>
+      </article>
+      <article class="step" data-reveal>
+        <span class="step-num">2</span>
+        <h3 data-i18n="s2.t">Development</h3>
+        <p data-i18n="s2.p">Websites en mobiele apps die snel zijn en lang meegaan. HTML, CSS en JavaScript voor het web, React Native voor iOS en Android.</p>
+      </article>
+      <article class="step" data-reveal>
+        <span class="step-num">3</span>
+        <h3 data-i18n="s3.t">Livegang</h3>
+        <p data-i18n="s3.p">Deploy, domein en hosting geregeld, met één aanspreekpunt en korte lijnen. Daarna blijf ik beschikbaar voor kleine wijzigingen.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ===== Afsluit-CTA ===== -->
+<section class="cta-sec" id="contact">
+  <div class="wrap">
+    <div class="cta-card" data-reveal>
+      <h2 data-i18n="cta.h">Laten we samenwerken</h2>
+      <p data-i18n="cta.p">Vertel kort wat je nodig hebt, dan hoor je snel van me.</p>
+      <a class="btn-white" href="mailto:mertanil_61@outlook.com?subject=Project%20voor%20Mert">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+        <span data-i18n="cta.btn">Mail mij</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ===== Footer ===== -->
+<footer>
+  <div class="wrap">
+    <div class="foot-top">
+      <div>
+        <div class="foot-brand">
+          <span class="brand-mark">MA</span>
+          <b>Mert Altintas</b>
+        </div>
+        <p class="foot-tag" data-i18n="foot.tag">Freelance designer en developer. Apps en websites, van eerste schets tot live product.</p>
+      </div>
+      <div class="foot-col">
+        <b data-i18n="foot.nav">Snel naar</b>
+        <a href="#over" data-i18n="foot.about">Over mij</a>
+        <a href="#werk" data-i18n="foot.work">Werk</a>
+        <a href="#how" data-i18n="foot.how">Zo werk ik</a>
+      </div>
+      <div class="foot-col">
+        <b data-i18n="foot.contact">Contact</b>
+        <a href="mailto:mertanil_61@outlook.com">mertanil_61@outlook.com</a>
+        <span class="foot-muted">Arnhem, NL</span>
+        <span class="foot-muted" data-clock>--:--</span>
+      </div>
+      <div class="foot-col">
+        <b data-i18n="foot.follow">Volg mij</b>
+        <div class="foot-socials">
+          <a href="https://github.com/MertHU" class="soc" aria-label="GitHub" target="_blank" rel="noopener">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .5C5.65.5.5 5.65.5 12c0 5.08 3.29 9.39 7.86 10.91.58.11.79-.25.79-.55 0-.27-.01-1.17-.02-2.12-3.2.7-3.87-1.36-3.87-1.36-.52-1.33-1.28-1.68-1.28-1.68-1.04-.71.08-.7.08-.7 1.15.08 1.76 1.19 1.76 1.19 1.03 1.75 2.69 1.25 3.34.95.1-.74.4-1.25.72-1.54-2.55-.29-5.23-1.28-5.23-5.68 0-1.26.45-2.28 1.19-3.09-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.17 1.18a11 11 0 0 1 5.78 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.23 2.76.11 3.05.74.81 1.19 1.83 1.19 3.09 0 4.41-2.69 5.38-5.25 5.67.41.35.77 1.05.77 2.12 0 1.53-.01 2.76-.01 3.14 0 .3.2.67.8.55A10.52 10.52 0 0 0 23.5 12C23.5 5.65 18.35.5 12 .5z"/></svg>
+          </a>
+          <a href="mailto:mertanil_61@outlook.com" class="soc" aria-label="E-mail">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+          </a>
+        </div>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <span>© 2026 Mert Altintas</span>
+      <span data-i18n="foot.credit">Ontworpen &amp; gebouwd door mij</span>
+    </div>
+  </div>
+</footer>
+
+<!-- ===== GSAP + ScrollTrigger + Lenis (CDN) ===== -->
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrollTrigger.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/lenis@1.1.20/dist/lenis.min.js"></script>
+<script>
+(function () {
+  const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  if ("scrollRestoration" in history) history.scrollRestoration = "manual";
+  window.scrollTo(0, 0);
+
+  /* ---------- i18n ---------- */
+  const I18N = {
+    nl: {
+      "nav.pill": "Neem contact op", "nav.pillshort": "Contact",
+      "hero.eyebrow": "Freelance Designer & Developer",
+      "hero.goopre": "Ik maak",
+      "hero.sub": "Ik ontwerp en bouw apps en websites. Van eerste schets tot live product.",
+      "hero.cta": "Bekijk mijn werk", "hero.note": "Gevestigd in Arnhem, NL", "hero.scroll": "Scroll",
+      "about.eyebrow": "Over mij", "about.title": "Ik ben Mert.",
+      "about.p1": "27, uit Arnhem. Ik begon met een MBO-opleiding applicatieontwikkeling en zit nu in mijn derde jaar HBO-ICT aan de Hogeschool Utrecht. Ik bouw met React Native, React en TypeScript, en ik ontwerp het liefst zelf wat ik daarna bouw.",
+      "about.p2": "Naast mijn studie werk ik als freelance designer en developer. Ik maak websites voor ondernemers en bouw mijn eigen app, ChoreShare, een huishoud-app voor studentenhuizen die ik van nul heb opgezet.",
+      "about.p3": "Waar ik naartoe werk: een developer zijn die je een probleem geeft en een afgemaakt product teruggeeft. Geen half werk, geen buzzwords. In mijn vrije tijd vind je me aan de boulderwand of achter een film.",
+      "work.eyebrow": "Werk", "work.h": "Recente projecten",
+      "ph.note": "Beeld volgt",
+      "w1.p": "Huishoud-app voor studentenhuizen. Taken, gedeelde uitgaven en een huisagenda in één app. Van nul opgezet, ontwerp en code.",
+      "w1.cat": "App · Eigen product",
+      "w2.p": "Marketingsite voor de app: een one-pager met scroll-animaties, statisch gebouwd en dus snel en simpel te hosten.",
+      "w2.cat": "Website · Eigen product", "w2.link": "Bekijk live",
+      "w3.p": "Festival-app, gebouwd in teamverband op de Hogeschool Utrecht. Frontend plus de gedeelde basis: thema's, taalwissel en toasts.",
+      "w3.cat": "App · Teamproject HU",
+      "steps.eyebrow": "Zo werk ik", "steps.h": "Van eerste schets tot live product",
+      "s1.t": "Design",
+      "s1.p": "Strak, functioneel design met oog voor typografie en detail. Geen templates: elk scherm op maat voor jouw merk en jouw gebruikers.",
+      "s2.t": "Development",
+      "s2.p": "Websites en mobiele apps die snel zijn en lang meegaan. HTML, CSS en JavaScript voor het web, React Native voor iOS en Android.",
+      "s3.t": "Livegang",
+      "s3.p": "Deploy, domein en hosting geregeld, met één aanspreekpunt en korte lijnen. Daarna blijf ik beschikbaar voor kleine wijzigingen.",
+      "cta.h": "Laten we samenwerken",
+      "cta.p": "Vertel kort wat je nodig hebt, dan hoor je snel van me.",
+      "cta.btn": "Mail mij",
+      "foot.tag": "Freelance designer en developer. Apps en websites, van eerste schets tot live product.",
+      "foot.nav": "Snel naar", "foot.about": "Over mij", "foot.work": "Werk", "foot.how": "Zo werk ik",
+      "foot.contact": "Contact", "foot.follow": "Volg mij",
+      "foot.credit": "Ontworpen & gebouwd door mij",
+      "meta.title": "Mert Altintas — Freelance Designer & Developer"
+    },
+    en: {
+      "nav.pill": "Get in touch", "nav.pillshort": "Contact",
+      "hero.eyebrow": "Freelance Designer & Developer",
+      "hero.goopre": "I make",
+      "hero.sub": "I design and build apps and websites. From first sketch to live product.",
+      "hero.cta": "See my work", "hero.note": "Based in Arnhem, NL", "hero.scroll": "Scroll",
+      "about.eyebrow": "About me", "about.title": "I'm Mert.",
+      "about.p1": "27, from Arnhem. I started with a software development degree at MBO level and I'm now in my third year of HBO-ICT at Hogeschool Utrecht. I build with React Native, React and TypeScript, and I prefer to design what I build myself.",
+      "about.p2": "Alongside my studies I work as a freelance designer and developer. I make websites for business owners and I'm building my own app, ChoreShare, a household app for student houses that I set up from scratch.",
+      "about.p3": "What I'm working towards: being a developer you hand a problem and get back a finished product. No half work, no buzzwords. In my spare time you'll find me on a bouldering wall or watching a film.",
+      "work.eyebrow": "Work", "work.h": "Recent projects",
+      "ph.note": "Image coming",
+      "w1.p": "Household app for student houses. Chores, shared expenses and a house calendar in one app. Built from scratch, design and code.",
+      "w1.cat": "App · Own product",
+      "w2.p": "Marketing site for the app: a one-pager with scroll animations, fully static and therefore fast and simple to host.",
+      "w2.cat": "Website · Own product", "w2.link": "View live",
+      "w3.p": "Festival app, built as a team at Hogeschool Utrecht. Frontend plus the shared foundation: themes, language switching and toasts.",
+      "w3.cat": "App · Team project at HU",
+      "steps.eyebrow": "How I work", "steps.h": "From first sketch to live product",
+      "s1.t": "Design",
+      "s1.p": "Clean, functional design with an eye for typography and detail. No templates: every screen made to measure for your brand and your users.",
+      "s2.t": "Development",
+      "s2.p": "Websites and mobile apps built to be fast and to last. HTML, CSS and JavaScript for the web, React Native for iOS and Android.",
+      "s3.t": "Launch",
+      "s3.p": "Deploy, domain and hosting taken care of, with one point of contact and short lines. After launch I stay available for small changes.",
+      "cta.h": "Let's work together",
+      "cta.p": "Tell me briefly what you need and you'll hear from me soon.",
+      "cta.btn": "Email me",
+      "foot.tag": "Freelance designer and developer. Apps and websites, from first sketch to live product.",
+      "foot.nav": "Quick links", "foot.about": "About me", "foot.work": "Work", "foot.how": "How I work",
+      "foot.contact": "Contact", "foot.follow": "Follow me",
+      "foot.credit": "Designed & built by me",
+      "meta.title": "Mert Altintas — Freelance Designer & Developer"
+    }
+  };
+  const gooWordsByLang = {
+    nl: ["websites", "apps", "interfaces", "producten"],
+    en: ["websites", "apps", "interfaces", "products"]
+  };
+
+  function getSaved() { try { return localStorage.getItem("mert-lang"); } catch (e) { return null; } }
+  function saveLang(l) { try { localStorage.setItem("mert-lang", l); } catch (e) {} }
+  let lang = getSaved() || "nl";
+
+  function applyLang(l) {
+    if (!I18N[l]) l = "nl";
+    lang = l;
+    saveLang(l);
+    const dict = I18N[l];
+    document.documentElement.lang = l;
+    document.title = dict["meta.title"];
+    document.querySelectorAll("[data-i18n]").forEach((el) => {
+      const v = dict[el.getAttribute("data-i18n")];
+      if (v != null) el.innerHTML = v;
+    });
+    document.querySelectorAll(".lang button").forEach((b) => {
+      b.setAttribute("aria-pressed", String(b.getAttribute("data-lang") === l));
+    });
+  }
+  applyLang(lang);
+  document.querySelectorAll(".lang button").forEach((b) => {
+    b.addEventListener("click", () => applyLang(b.getAttribute("data-lang")));
+  });
+
+  /* ---------- Klok (Europe/Amsterdam) ---------- */
+  const clockEls = document.querySelectorAll("[data-clock]");
+  if (clockEls.length) {
+    const tick = () => {
+      const t = new Intl.DateTimeFormat("nl-NL", { timeZone: "Europe/Amsterdam", hour: "2-digit", minute: "2-digit" }).format(new Date());
+      clockEls.forEach((el) => { el.textContent = t + " CET"; });
+    };
+    tick();
+    setInterval(tick, 10000);
+  }
+
+  /* ---------- Gooey text-morph (21st.dev Gooey Text Morphing) ---------- */
+  const gooWords = () => gooWordsByLang[lang] || gooWordsByLang.nl;
+  const goo1 = document.querySelector(".goo-1");
+  const goo2 = document.querySelector(".goo-2");
+
+  function startGooey() {
+    if (!goo1 || !goo2) return;
+    const morphTime = 1.4;
+    const cooldownTime = 1.7;
+    let textIndex = gooWords().length - 1;
+    let time = Date.now();
+    let morph = 0;
+    let cooldown = cooldownTime;
+
+    goo1.textContent = gooWords()[textIndex % gooWords().length];
+    goo2.textContent = gooWords()[(textIndex + 1) % gooWords().length];
+
+    function setMorph(fraction) {
+      goo2.style.filter = `blur(${Math.min(8 / fraction - 8, 100)}px)`;
+      goo2.style.opacity = `${Math.pow(fraction, 0.4) * 100}%`;
+      const f = 1 - fraction;
+      goo1.style.filter = `blur(${Math.min(8 / f - 8, 100)}px)`;
+      goo1.style.opacity = `${Math.pow(f, 0.4) * 100}%`;
+    }
+    function doCooldown() {
+      morph = 0;
+      goo2.style.filter = ""; goo2.style.opacity = "100%";
+      goo1.style.filter = ""; goo1.style.opacity = "0%";
+    }
+    function doMorph() {
+      morph -= cooldown; cooldown = 0;
+      let fraction = morph / morphTime;
+      if (fraction > 1) { cooldown = cooldownTime; fraction = 1; }
+      setMorph(fraction);
+    }
+    function animate() {
+      requestAnimationFrame(animate);
+      const newTime = Date.now();
+      const shouldInc = cooldown > 0;
+      const dt = (newTime - time) / 1000; time = newTime;
+      cooldown -= dt;
+      if (cooldown <= 0) {
+        if (shouldInc) {
+          textIndex = (textIndex + 1) % gooWords().length;
+          goo1.textContent = gooWords()[textIndex % gooWords().length];
+          goo2.textContent = gooWords()[(textIndex + 1) % gooWords().length];
+        }
+        doMorph();
+      } else {
+        doCooldown();
+      }
+    }
+    animate();
+  }
+
+  /* ---------- Navbar: verdwijnt zodra je scrolt ---------- */
+  const navEl = document.querySelector("nav");
+  const updateNav = () => navEl.classList.toggle("nav-hidden", window.scrollY > 60);
+  window.addEventListener("scroll", updateNav, { passive: true });
+  updateNav();
+
+  /* ---------- Reduce Motion / geen GSAP: alles meteen tonen ---------- */
+  if (reduceMotion || !window.gsap || !window.ScrollTrigger) {
+    document.documentElement.classList.remove("gsap-init");
+    if (goo1) { goo1.textContent = gooWords()[0]; goo1.style.opacity = "100%"; }
+    if (goo2) { goo2.style.opacity = "0%"; }
+    return;
+  }
+
+  gsap.registerPlugin(ScrollTrigger);
+
+  /* ---------- Lenis smooth scroll ---------- */
+  if (window.Lenis) {
+    const lenis = new Lenis({ duration: 1.2, smoothWheel: true, wheelMultiplier: 1 });
+    lenis.on("scroll", ScrollTrigger.update);
+    gsap.ticker.add((time) => lenis.raf(time * 1000));
+    gsap.ticker.lagSmoothing(0);
+    document.querySelectorAll('a[href^="#"]').forEach((a) => {
+      a.addEventListener("click", (e) => {
+        const id = a.getAttribute("href");
+        if (id.length > 1) {
+          const el = document.querySelector(id);
+          if (el) { e.preventDefault(); lenis.scrollTo(el, { offset: -20 }); }
+        }
+      });
+    });
+  }
+
+  /* ---------- Scroll-voortgangsbalk ---------- */
+  gsap.to(".progress", {
+    scaleX: 1, ease: "none",
+    scrollTrigger: { trigger: document.body, start: "top top", end: "bottom bottom", scrub: 0.3 },
+  });
+
+  /* ---------- Hero-entrance: naam per woord (blur-cut reveal), rest gestaggerd ---------- */
+  startGooey();
+  const words = gsap.utils.toArray(".hero-name .word");
+  const heroBits = gsap.utils.toArray("[data-hero]");
+  gsap.set(words, { opacity: 0, yPercent: 60, filter: "blur(10px)" });
+  gsap.set(heroBits, { opacity: 0, y: 26 });
+
+  const tl = gsap.timeline({ defaults: { ease: "power3.out" }, delay: 0.25 });
+  tl.to(words, { opacity: 1, yPercent: 0, filter: "blur(0px)", duration: 0.9, stagger: 0.14 })
+    .to(heroBits, { opacity: 1, y: 0, duration: 0.8, stagger: 0.09 }, "-=0.55");
+
+  /* ---------- Portret: zachte float + lichte muis-parallax ---------- */
+  const portrait = document.querySelector(".hero-portrait");
+  const blob = document.querySelector(".portrait-blob");
+  if (portrait) {
+    gsap.to(portrait, { y: -10, duration: 3.2, yoyo: true, repeat: -1, ease: "sine.inOut" });
+    if (window.matchMedia("(pointer: fine)").matches) {
+      window.addEventListener("mousemove", (e) => {
+        const dx = e.clientX / window.innerWidth - 0.5;
+        const dy = e.clientY / window.innerHeight - 0.5;
+        gsap.to(portrait, { x: dx * 14, duration: 0.6, ease: "power2.out" });
+        if (blob) gsap.to(blob, { xPercent: -50 + dx * -3, duration: 0.8, ease: "power2.out" });
+      });
+    }
+  }
+
+  /* ---------- Drijvende vormen: trage drift + scroll-parallax ---------- */
+  gsap.utils.toArray(".shape").forEach((el) => {
+    const drift = parseFloat(el.dataset.drift) || 16;
+    gsap.to(el, {
+      x: `random(-${drift}, ${drift})`, y: `random(-${drift}, ${drift})`,
+      duration: "random(5, 8)", yoyo: true, repeat: -1, ease: "sine.inOut", repeatRefresh: true,
+    });
+    gsap.to(el, {
+      yPercent: parseFloat(el.dataset.speed) * 140, ease: "none",
+      scrollTrigger: { trigger: document.body, start: "top top", end: "bottom bottom", scrub: true },
+    });
+  });
+
+  /* ---------- Scroll-hint vervaagt na eerste scroll ---------- */
+  gsap.to(".scroll-hint", {
+    opacity: 0, ease: "none",
+    scrollTrigger: { trigger: ".hero", start: "top top", end: "+=160", scrub: true },
+  });
+
+  /* ---------- Reveals ---------- */
+  gsap.set("[data-reveal]", { opacity: 0, y: 44 });
+  ScrollTrigger.batch("[data-reveal]", {
+    start: "top 85%",
+    onEnter: (els) => gsap.to(els, {
+      opacity: 1, y: 0, duration: 0.9, stagger: 0.12, ease: "power3.out", overwrite: true,
+    }),
+  });
+
+  window.addEventListener("load", () => ScrollTrigger.refresh());
+})();
+</script>
+
+</body>
+</html>

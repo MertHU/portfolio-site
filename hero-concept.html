@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Mert Altintas — Junior Developer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,600;12..96,700;12..96,800&family=Instrument+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Comic+Neue:wght@400;700&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --primary: #C05B2E;
+    --deep:    #8F3E1C;
+    --second:  #EFD9C8;
+    --ink:     #22272B;
+    --bg:      #F0EDDE;      /* matches the cartoon backdrop */
+    --accent:  #F0A84B;
+    --muted:   #6B6459;
+    --hairline: #DED6C4;
+    --line:    #2A2620;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  /* retro N64-handje als cursor, overal (pixel-art PNG, hotspot op de vingertop);
+     tijdens mousedown zet JS .pressing op <html> en buigt de vinger (klik-variant) */
+  html, body, a, button, .lang button, .dock-item, .back-circle {
+    cursor: url("assets/cursor-hand.png") 11 1, auto;
+  }
+  html.pressing, html.pressing body, html.pressing a, html.pressing button,
+  html.pressing .lang button, html.pressing .dock-item, html.pressing .back-circle {
+    cursor: url("assets/cursor-hand-click.png?v=2") 11 7, auto;
+  }
+  html, body { height: 100%; }
+  body {
+    font-family: "Comic Sans MS", "Comic Sans", "Comic Neue", cursive; /* test op Merts verzoek, was "Instrument Sans" */
+    color: var(--ink);
+    background: var(--bg);
+    overflow: hidden;
+    -webkit-font-smoothing: antialiased;
+    /* geen blauwe selectie bij klikken/slepen; LET OP: op de Contact-pagina straks
+       user-select: text terugzetten op het mailadres zodat het kopieerbaar blijft */
+    user-select: none;
+    -webkit-user-select: none;
+  }
+  img { -webkit-user-drag: none; user-drag: none; }
+  h1, h2, h3, .display { font-family: "Comic Sans MS", "Comic Sans", "Comic Neue", cursive; font-weight: bold; /* test, was "Bricolage Grotesque" */ }
+
+  /* subtle paper grain */
+  body::before {
+    content: ""; position: fixed; inset: 0; pointer-events: none; z-index: 9;
+    opacity: 0.04; mix-blend-mode: multiply;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  /* ===== Directional plane: home in the centre, each page in its own direction ===== */
+  .viewport { width: 100vw; height: 100vh; overflow: hidden; }
+  .track { position: relative; width: 100%; height: 100%; will-change: transform; }
+  .panel { position: absolute; top: 0; left: 0; width: 100vw; height: 100vh; }
+  .panel.pos-up    { top: -100vh; }  /* About me   */
+  .panel.pos-right { left: 100vw; }  /* Projects   */
+  .panel.pos-down  { top: 100vh; }   /* Skills     */
+  .panel.pos-left  { left: -100vw; } /* Contact    */
+
+  /* ===== HOME ===== */
+  .home {
+    display: grid;
+    /* symmetric side columns so the portrait sits on the exact page centre */
+    grid-template-columns: 1fr minmax(360px, 520px) 1fr;
+    align-items: center;
+    gap: 40px;
+    padding: 48px clamp(40px, 6vw, 96px);
+  }
+
+  /* gooey pixel trail achter de content */
+  #pixelCanvas {
+    position: absolute; inset: 0; z-index: 0; pointer-events: none;
+    display: grid; filter: url(#goo);
+  }
+  #pixelCanvas div { opacity: 0; background: var(--second); }
+  #pixelCanvas div.on { opacity: 1; }
+  /* content boven de trail */
+  .intro { position: relative; z-index: 2; }
+
+  /* top bar */
+  .topbar {
+    position: absolute; top: 34px; left: clamp(40px, 6vw, 96px); right: clamp(40px, 6vw, 96px);
+    display: flex; justify-content: flex-end; align-items: center; z-index: 5;
+  }
+  .lang { display: flex; gap: 6px; font-size: 13px; font-weight: 600; color: var(--muted); }
+  .lang button { font: inherit; background: none; border: 0; color: var(--muted); padding: 4px 6px; border-radius: 7px; }
+  .lang button.on { color: var(--ink); text-decoration: underline; text-underline-offset: 3px; }
+
+  /* left column */
+  .intro { padding-left: clamp(24px, 5vw, 110px); }
+  .intro .eyebrow {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-size: 12px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted);
+    margin-bottom: 20px;
+  }
+  .intro .eyebrow::before { content: ""; width: 26px; height: 2px; background: var(--accent); border-radius: 2px; }
+  .intro h1 {
+    /* naam op een regel, dus kleiner dan de oude twee-regel-versie */
+    font-size: clamp(38px, 4.4vw, 68px); line-height: 0.92; font-weight: 800; letter-spacing: -0.03em;
+    margin-bottom: 16px;
+  }
+  .intro .bio { margin-bottom: 22px; }
+  .intro .role { margin-bottom: 26px; }
+  .intro h1 .last { color: var(--primary); -webkit-text-stroke: 0; position: relative; display: inline-block; }
+  /* handgetekende accenten (16 jul): krabbel onder de naam, pijl naar de portrait, sparkles */
+  .squiggle { position: absolute; left: 2%; bottom: -12px; width: 96%; height: 12px; color: var(--primary); }
+  .doodle { position: absolute; color: var(--ink); pointer-events: none; }
+  .doodle-spark-a { top: -36px; left: calc(clamp(24px, 5vw, 110px) - 6px); width: 22px; height: 22px; color: var(--accent); transform: rotate(12deg); }
+  .doodle-spark-b { bottom: 52px; left: calc(clamp(24px, 5vw, 110px) + 196px); width: 18px; height: 18px; opacity: 0.75; transform: rotate(-9deg); }
+  .doodle-arrow { right: -34px; bottom: 46px; width: 104px; height: 74px; opacity: 0.85; transform: rotate(6deg); }
+  @media (max-width: 980px) { .doodle { display: none; } }
+  .role {
+    display: inline-block; font-family: "Comic Sans MS", "Comic Sans", "Comic Neue", cursive; font-weight: 600; font-size: 19px;
+    color: var(--ink); padding: 6px 14px; border: 2px solid var(--line); border-radius: 999px; background: #fff;
+    margin-bottom: 24px;
+  }
+  .bio { font-size: 16.5px; line-height: 1.6; color: var(--muted); max-width: 34ch; margin-bottom: 26px; }
+  .bio b { color: var(--ink); font-weight: 600; }
+  .meta { display: flex; align-items: center; gap: 10px; font-size: 13.5px; font-weight: 600; color: var(--muted); }
+  .meta .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--primary); }
+
+  /* center portrait */
+  .portrait {
+    position: relative; display: grid; place-items: end center;
+    height: calc(100% + 48px); margin-bottom: -48px; /* compensate section padding: image touches viewport bottom */
+  }
+  .portrait img {
+    position: relative; z-index: 2; width: min(100%, 483px); height: auto; display: block;
+    /* cartoon.png is nu een transparante cutout, edge-mask niet meer nodig */
+    /* kleine overhang zodat de muis-parallax geen naad onder de figuur toont */
+    margin-bottom: -10px;
+    /* schaduw achter de figuur: harde offset in perzik (stijl van de site) + zachte diepte */
+    filter: drop-shadow(14px 14px 0 rgba(228, 182, 149, 0.65)) drop-shadow(0 24px 36px rgba(34, 39, 43, 0.14));
+  }
+  /* right dock-nav (macOS-dock magnificatie, in de eigen stijl van de site) */
+  .dock {
+    justify-self: center; z-index: 2;
+    display: flex; flex-direction: column; align-items: center; gap: 8px;
+    background: #fff; border: 2px solid var(--line); border-radius: 999px;
+    padding: 12px 9px; box-shadow: 4px 4px 0 var(--line); width: max-content;
+  }
+  .dock-item {
+    position: relative; width: 46px; height: 46px; flex: 0 0 auto;
+    display: grid; place-items: center;
+    background: none; border: 2px solid transparent; border-radius: 50%;
+    color: var(--ink); padding: 0;
+    transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+  }
+  .dock-item svg { width: 52%; height: 52%; }
+  .dock-item:hover, .dock-item:focus-visible { background: var(--bg); border-color: var(--line); color: var(--primary); }
+  .dock-label {
+    position: absolute; right: calc(100% + 16px); top: 50%; translate: 0 -50%;
+    background: #fff; border: 1.5px solid var(--line); border-radius: 8px;
+    padding: 5px 11px; font-size: 13px; font-weight: 600; white-space: nowrap;
+    box-shadow: 2px 2px 0 var(--line); color: var(--ink);
+    opacity: 0; transform: translateX(6px); pointer-events: none;
+    transition: opacity 0.18s ease, transform 0.18s ease;
+  }
+  .dock-item:hover .dock-label, .dock-item:focus-visible .dock-label { opacity: 1; transform: translateX(0); }
+  /* game-style selectiepijltje rechts van het gehoverde item: obsidian-look
+     (glazig donker facet-verloop via gradient + clip-path driehoek) */
+  .dock-item::after {
+    content: ""; position: absolute; left: calc(100% + 24px); top: 50%;
+    translate: 0 -50%; width: 16px; height: 20px;
+    background: linear-gradient(135deg, #4A525A 0%, #22272B 42%, #0C0E10 100%);
+    clip-path: polygon(100% 0, 0 50%, 100% 100%);
+    filter: drop-shadow(2px 3px 0 rgba(42, 38, 32, 0.3));
+    opacity: 0; transform: translateX(8px); pointer-events: none;
+    transition: opacity 0.15s ease, transform 0.15s ease;
+  }
+  .dock-item:hover::after, .dock-item:focus-visible::after { opacity: 1; transform: translateX(0); }
+
+  /* ===== SUBPAGES ===== */
+  .sub { display: grid; place-items: center; text-align: center; padding: 60px; background: var(--bg); }
+  /* placeholder page colours */
+  .sub.pos-up    { background: #F0A84B; }  /* About    */
+  .sub.pos-right { background: #C05B2E; }  /* Projects */
+  .sub.pos-down  { background: #8F3E1C; }  /* Skills   */
+  .sub.pos-left  { background: #EFD9C8; }  /* Contact  */
+  .sub.pos-up .kicker { color: var(--deep); }
+  .sub.pos-right, .sub.pos-down { color: #F6F1E4; }
+  .sub.pos-right .kicker, .sub.pos-down .kicker { color: var(--accent); }
+  .sub.pos-right p, .sub.pos-down p { color: #F0E4D3; }
+  .sub.pos-left .kicker { color: var(--primary); }
+  .sub .inner { max-width: 640px; }
+  .sub .kicker { font-size: 12px; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; color: var(--accent); margin-bottom: 14px; }
+  .sub h2 { font-size: clamp(40px, 6vw, 72px); font-weight: 800; letter-spacing: -0.03em; line-height: 1; margin-bottom: 18px; }
+  .sub p { font-size: 17px; line-height: 1.6; color: var(--muted); }
+  /* circle-reveal navigatie: pagina cirkelt uit de dock-knop open, de ronde
+     terugknop zit op dezelfde plek en zuigt hem weer terug */
+  .panel.circle-mode { position: fixed; top: 0; left: 0; z-index: 30; will-change: clip-path; }
+  /* ronde terugknop met home-icoon; toets B (en Esc) gaat ook terug.
+     LET OP: absolute (niet fixed), anders blijft hij op het scherm hangen
+     als zijn panel weer buiten beeld geparkeerd wordt (bug 16 jul) */
+  .back-circle {
+    position: absolute; translate: -50% -50%; width: 52px; height: 52px;
+    border-radius: 50%; background: #fff; border: 2px solid var(--line);
+    box-shadow: 3px 3px 0 var(--line); display: grid; place-items: center;
+    color: var(--ink); padding: 0;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+  .back-circle:hover, .back-circle:focus-visible { transform: scale(1.1); box-shadow: 4px 4px 0 var(--line); }
+  .back-circle svg { width: 24px; height: 24px; }
+
+
+  /* click sparks (reactbits ClickSpark, geport naar vanilla) */
+  #sparkCanvas { position: fixed; inset: 0; z-index: 45; pointer-events: none; }
+
+  /* reveal-on-load */
+  .rv { opacity: 0; transform: translateY(18px); }
+
+  @media (max-width: 980px) {
+    .home { grid-template-columns: 1fr; grid-template-areas: "portrait" "intro" "roadmap"; text-align: center; overflow-y: auto; padding-top: 90px; }
+    .portrait { grid-area: portrait; } .intro { grid-area: intro; }
+    .dock { grid-area: roadmap; flex-direction: row; margin: 0 auto 24px; }
+    .dock-label { display: none; } /* geen hover op touch */
+    .dock-item::after { display: none; } /* selectiepijltje ook niet op mobiel */
+    .bio { margin-left: auto; margin-right: auto; }
+  }
+</style>
+</head>
+<body>
+  <div class="viewport">
+    <div class="track" id="track">
+
+      <!-- ============ HOME ============ -->
+      <section class="panel home">
+        <!-- gooey pixel trail (21st.dev @danielpetho gooey-filter, geport naar vanilla) -->
+        <svg aria-hidden="true" style="position:absolute;width:0;height:0">
+          <defs>
+            <filter id="goo">
+              <feGaussianBlur in="SourceGraphic" stdDeviation="5" result="blur" />
+              <feColorMatrix in="blur" type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 19 -9" result="goo" />
+              <feComposite in="SourceGraphic" in2="goo" operator="atop" />
+            </filter>
+          </defs>
+        </svg>
+        <div id="pixelCanvas" aria-hidden="true"></div>
+
+        <div class="topbar">
+          <div class="lang"><button class="on">NL</button><button>EN</button></div>
+        </div>
+
+        <div class="intro">
+          <svg class="doodle doodle-spark-a rv" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v6M12 15v6M3 12h6M15 12h6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg>
+          <h1 class="rv">Mert <span class="last">Altintas<svg class="squiggle" viewBox="0 0 200 14" preserveAspectRatio="none" aria-hidden="true"><path d="M4 8 C 40 2, 80 13, 120 6 S 180 3, 196 8" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round"/></svg></span></h1>
+          <p class="bio rv">Ik zet ideeën om in digitale oplossingen. Met een passie voor <b>development</b>, <b>design</b> en <b>gebruiksvriendelijke interfaces</b>.</p>
+          <span class="role rv">Junior Developer</span>
+          <div class="meta rv"><span class="dot"></span> Arnhem, NL</div>
+          <svg class="doodle doodle-spark-b rv" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v5M12 15v5M4 12h5M15 12h5M7 7l2 2M15 15l2 2" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>
+          <svg class="doodle doodle-arrow rv" viewBox="0 0 120 84" aria-hidden="true"><path d="M6 72 C 42 70, 76 56, 102 20 M102 20 l-16 3 M102 20 l-3 16" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+
+        <div class="portrait rv">
+          <img src="assets/cartoon.png?v=8" alt="Mert Altintas, cartoon" />
+        </div>
+
+        <!-- dock-nav (21st.dev @ibelick dock, geport naar vanilla, gefuseerd met de kompas-items) -->
+        <nav class="dock rv" id="dock" aria-label="Navigatie">
+          <button class="dock-item" data-target="1" aria-label="About me">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="5"/><path d="M20 21a8 8 0 0 0-16 0"/></svg>
+            <span class="dock-label">About me</span>
+          </button>
+          <button class="dock-item" data-target="2" aria-label="Projects">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 20V4a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/><rect width="20" height="14" x="2" y="6" rx="2"/></svg>
+            <span class="dock-label">Projects</span>
+          </button>
+          <button class="dock-item" data-target="3" aria-label="Skills">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m18 16 4-4-4-4"/><path d="m6 8-4 4 4 4"/><path d="m14.5 4-5 16"/></svg>
+            <span class="dock-label">Skills</span>
+          </button>
+          <button class="dock-item" data-target="4" aria-label="Contact">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+            <span class="dock-label">Contact</span>
+          </button>
+        </nav>
+      </section>
+
+      <!-- ============ SUBPAGES: elk een eigen windrichting ============ -->
+      <section class="panel sub pos-up">
+        <button class="back-circle" data-target="0" aria-label="Terug">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/><path d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+        </button>
+        <div class="inner"><div class="kicker">About</div><h2>About me</h2><p>Deze pagina bouwen we straks.</p></div>
+      </section>
+      <section class="panel sub pos-right">
+        <button class="back-circle" data-target="0" aria-label="Terug">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/><path d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+        </button>
+        <div class="inner"><div class="kicker">Work</div><h2>Projects</h2><p>Hier komen de projectkaarten: ChoreShare, EventKit, en meer.</p></div>
+      </section>
+      <section class="panel sub pos-down">
+        <button class="back-circle" data-target="0" aria-label="Terug">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/><path d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+        </button>
+        <div class="inner"><div class="kicker">Stack</div><h2>Skills</h2><p>Hier komt de skill-set en tooling.</p></div>
+      </section>
+      <section class="panel sub pos-left">
+        <button class="back-circle" data-target="0" aria-label="Terug">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/><path d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+        </button>
+        <div class="inner"><div class="kicker">Say hi</div><h2>Contact</h2><p>Hier komen je mail en socials.</p></div>
+      </section>
+
+    </div>
+  </div>
+
+  <canvas id="sparkCanvas"></canvas>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script>
+    let current = 0;      /* 0 home, 1 about, 2 projects, 3 skills, 4 contact */
+    let animating = false;
+
+    /* CIRCLE-REVEAL navigatie (16 jul, verving de richtings-wipe na Merts akkoord):
+       elke pagina cirkelt open vanuit zijn dock-knop (clip-path circle), de ronde
+       terugknop op exact dezelfde plek zuigt hem weer terug. De track beweegt
+       nooit meer; .circle-mode zet het panel fullscreen op position:fixed. */
+    const PANELS = [null,
+      document.querySelector(".panel.pos-up"),     /* 1 about    */
+      document.querySelector(".panel.pos-right"),  /* 2 projects */
+      document.querySelector(".panel.pos-down"),   /* 3 skills   */
+      document.querySelector(".panel.pos-left"),   /* 4 contact  */
+    ];
+    let activePanel = null, circleOrigin = null;
+    const coverRadius = (x, y) =>
+      Math.hypot(Math.max(x, window.innerWidth - x), Math.max(y, window.innerHeight - y));
+    const circleClip = (r) => {
+      activePanel.style.clipPath = "circle(" + r + "px at " + circleOrigin.x + "px " + circleOrigin.y + "px)";
+    };
+    function openCircle(i, btn) {
+      animating = true;
+      activePanel = PANELS[i];
+      const b = btn.getBoundingClientRect();
+      circleOrigin = { x: b.left + b.width / 2, y: b.top + b.height / 2 };
+      const back = activePanel.querySelector(".back-circle");
+      back.style.left = circleOrigin.x + "px";
+      back.style.top = circleOrigin.y + "px";
+      activePanel.classList.add("circle-mode");
+      circleClip(0);
+      current = i;
+      const prox = { r: 0 };
+      gsap.to(prox, {
+        r: coverRadius(circleOrigin.x, circleOrigin.y), duration: 0.9, ease: "power3.inOut",
+        onUpdate: () => circleClip(prox.r),
+        onComplete: () => { activePanel.style.clipPath = "none"; animating = false; },
+      });
+    }
+    function closeCircle() {
+      animating = true;
+      const prox = { r: coverRadius(circleOrigin.x, circleOrigin.y) };
+      gsap.to(prox, {
+        r: 0, duration: 0.75, ease: "power3.inOut",
+        onUpdate: () => circleClip(prox.r),
+        onComplete: () => {
+          activePanel.classList.remove("circle-mode");
+          activePanel.style.clipPath = "";
+          activePanel = null;
+          current = 0; animating = false;
+        },
+      });
+    }
+    function goTo(i, srcEl) {
+      i = Math.max(0, Math.min(PANELS.length - 1, i));
+      if (i === current || animating) return;
+      if (i > 0 && current === 0 && srcEl) openCircle(i, srcEl);
+      else if (i === 0 && activePanel) closeCircle();
+    }
+
+    document.querySelectorAll("[data-target]").forEach((el) => {
+      el.addEventListener("click", (e) => {
+        e.preventDefault();
+        goTo(parseInt(el.dataset.target, 10), el);
+      });
+    });
+
+    // keyboard: Esc en B (zoals op een controller) gaan terug naar home
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" || e.key === "b" || e.key === "B") goTo(0);
+    });
+
+    // click sparks (reactbits ClickSpark in vanilla): streepjes schieten uit het klikpunt
+    const sparkCanvas = document.getElementById("sparkCanvas");
+    const sparkCtx = sparkCanvas.getContext("2d");
+    const SPARK = { count: 8, size: 10, radius: 17, duration: 420 };
+    let sparks = [], sparkRaf = null;
+    function sizeSparkCanvas() {
+      sparkCanvas.width = window.innerWidth * devicePixelRatio;
+      sparkCanvas.height = window.innerHeight * devicePixelRatio;
+      sparkCtx.setTransform(devicePixelRatio, 0, 0, devicePixelRatio, 0, 0);
+    }
+    sizeSparkCanvas();
+    window.addEventListener("resize", sizeSparkCanvas);
+    function drawSparks(now) {
+      sparkCtx.clearRect(0, 0, window.innerWidth, window.innerHeight);
+      sparks = sparks.filter((s) => {
+        const p = (now - s.t0) / SPARK.duration;
+        if (p >= 1) return false;
+        const eased = 1 - Math.pow(1 - p, 3); /* ease-out cubic */
+        const dist = eased * SPARK.radius;
+        const len = SPARK.size * (1 - eased);
+        const x1 = s.x + Math.cos(s.hoek) * dist;
+        const y1 = s.y + Math.sin(s.hoek) * dist;
+        sparkCtx.strokeStyle = s.kleur;
+        sparkCtx.lineWidth = 2;
+        sparkCtx.lineCap = "round";
+        sparkCtx.beginPath();
+        sparkCtx.moveTo(x1, y1);
+        sparkCtx.lineTo(x1 + Math.cos(s.hoek) * len, y1 + Math.sin(s.hoek) * len);
+        sparkCtx.stroke();
+        return true;
+      });
+      sparkRaf = sparks.length ? requestAnimationFrame(drawSparks) : null;
+    }
+    document.addEventListener("mousedown", (e) => {
+      /* inkt op lichte pagina's, cream op de donkere (projects/skills) */
+      const kleur = (current === 2 || current === 3) ? "#F6F1E4" : "#22272B";
+      const t0 = performance.now();
+      for (let i = 0; i < SPARK.count; i++) {
+        sparks.push({ x: e.clientX, y: e.clientY, hoek: (2 * Math.PI * i) / SPARK.count, t0, kleur });
+      }
+      if (!sparkRaf) sparkRaf = requestAnimationFrame(drawSparks);
+    });
+
+    // cursor: vinger buigt zolang de muisknop ingedrukt is
+    document.addEventListener("mousedown", () => document.documentElement.classList.add("pressing"));
+    document.addEventListener("mouseup", () => document.documentElement.classList.remove("pressing"));
+    document.addEventListener("mouseleave", () => document.documentElement.classList.remove("pressing"));
+
+    // gooey pixel trail: muis laat blokjes achter die door het SVG-filter samensmelten
+    const pixelCanvas = document.getElementById("pixelCanvas");
+    let pxSize = 28, pxCols = 0, pxCells = [], pxTimers = [];
+    function buildPixelGrid() {
+      pxSize = window.innerWidth < 980 ? 22 : 28;
+      pxCols = Math.ceil(pixelCanvas.clientWidth / pxSize);
+      const pxRows = Math.ceil(pixelCanvas.clientHeight / pxSize);
+      pixelCanvas.style.gridTemplateColumns = "repeat(" + pxCols + ", 1fr)";
+      pixelCanvas.style.gridTemplateRows = "repeat(" + pxRows + ", 1fr)";
+      pixelCanvas.innerHTML = "";
+      pxCells = []; pxTimers = [];
+      const frag = document.createDocumentFragment();
+      for (let i = 0; i < pxCols * pxRows; i++) {
+        const d = document.createElement("div");
+        frag.appendChild(d); pxCells.push(d); pxTimers.push(0);
+      }
+      pixelCanvas.appendChild(frag);
+    }
+    buildPixelGrid();
+    window.addEventListener("resize", buildPixelGrid);
+    window.addEventListener("mousemove", (e) => {
+      if (current !== 0) return;
+      const r = pixelCanvas.getBoundingClientRect();
+      if (e.clientX < r.left || e.clientY < r.top || e.clientX >= r.right || e.clientY >= r.bottom) return;
+      const i = Math.floor((e.clientX - r.left) / pxSize) + Math.floor((e.clientY - r.top) / pxSize) * pxCols;
+      const cell = pxCells[i];
+      if (!cell) return;
+      cell.classList.add("on");
+      clearTimeout(pxTimers[i]);
+      pxTimers[i] = setTimeout(() => cell.classList.remove("on"), 500);
+    });
+
+    // dock-magnificatie: knoppen zwellen op naarmate de muis dichterbij komt (macOS-dock)
+    if (window.matchMedia("(pointer: fine)").matches) {
+      const BASE = 46, GROW = 24, RANGE = 110;
+      const dockEl = document.getElementById("dock");
+      const dockItems = [...dockEl.querySelectorAll(".dock-item")].map((el) => ({
+        el,
+        wTo: gsap.quickTo(el, "width",  { duration: 0.25, ease: "power2.out" }),
+        hTo: gsap.quickTo(el, "height", { duration: 0.25, ease: "power2.out" }),
+      }));
+      window.addEventListener("mousemove", (e) => {
+        if (current !== 0) return;
+        const r = dockEl.getBoundingClientRect();
+        const near = e.clientX > r.left - 130 && e.clientX < r.right + 130 &&
+                     e.clientY > r.top - 130 && e.clientY < r.bottom + 130;
+        dockItems.forEach(({ el, wTo, hTo }) => {
+          let size = BASE;
+          if (near) {
+            const b = el.getBoundingClientRect();
+            const d = Math.abs(e.clientY - (b.top + b.height / 2));
+            size = BASE + GROW * Math.max(0, 1 - d / RANGE);
+          }
+          wTo(size); hTo(size);
+        });
+      });
+    }
+
+    // subtiele muis-parallax op home: portrait beweegt zacht mee, doodle iets sterker (diepte)
+    if (window.matchMedia("(pointer: fine)").matches) {
+      const layers = [
+        { el: document.querySelector(".portrait img"), fx: 14, fy: 7 },
+      ].filter(l => l.el).map(l => ({
+        fx: l.fx, fy: l.fy,
+        xTo: gsap.quickTo(l.el, "x", { duration: 0.7, ease: "power3.out" }),
+        yTo: gsap.quickTo(l.el, "y", { duration: 0.7, ease: "power3.out" }),
+      }));
+      window.addEventListener("mousemove", (e) => {
+        if (current !== 0 || animating) return;
+        const nx = e.clientX / window.innerWidth - 0.5;
+        const ny = e.clientY / window.innerHeight - 0.5;
+        layers.forEach(L => { L.xTo(nx * L.fx); L.yTo(ny * L.fy); });
+      });
+    }
+
+    // intro reveal
+    window.addEventListener("load", () => {
+      gsap.to(".rv", { opacity: 1, y: 0, duration: 0.8, ease: "power3.out", stagger: 0.09, delay: 0.15 });
+    });
+
+  </script>
+</body>
+</html>

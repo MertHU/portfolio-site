@@ -72,13 +72,13 @@
     padding: 48px clamp(40px, 6vw, 96px);
   }
 
-  /* gooey pixel trail achter de content */
-  #pixelCanvas {
-    position: absolute; inset: 0; z-index: 0; pointer-events: none;
-    display: grid; filter: url(#goo);
+  /* liquid trail: canvas per panel, het goo-filter smelt de cirkels tot een
+     vloeibare sliert die achter de muis aan stroomt (verving de pixel-grid) */
+  .trail-canvas {
+    /* LET OP: canvas is een replaced element, inset:0 rekt hem niet op; width/height moet expliciet */
+    position: absolute; inset: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none;
+    filter: url(#goo);
   }
-  #pixelCanvas div { opacity: 0; background: var(--second); }
-  #pixelCanvas div.on { opacity: 1; }
   /* content boven de trail */
   .intro { position: relative; z-index: 2; }
 
@@ -176,8 +176,8 @@
   .dock-item:hover::after, .dock-item:focus-visible::after { opacity: 1; transform: translateX(0); }
 
   /* ===== SUBPAGES ===== */
-  .sub { display: grid; place-items: center; text-align: center; padding: 60px; background: var(--bg); }
-  /* placeholder page colours */
+  .sub { display: grid; place-items: center; text-align: left; padding: clamp(28px, 5vh, 56px) clamp(24px, 5vw, 72px); background: var(--bg); overflow: hidden; }
+  /* paginakleuren */
   .sub.pos-up    { background: #F0A84B; }  /* About    */
   .sub.pos-right { background: #C05B2E; }  /* Projects */
   .sub.pos-down  { background: #8F3E1C; }  /* Skills   */
@@ -187,10 +187,129 @@
   .sub.pos-right .kicker, .sub.pos-down .kicker { color: var(--accent); }
   .sub.pos-right p, .sub.pos-down p { color: #F0E4D3; }
   .sub.pos-left .kicker { color: var(--primary); }
-  .sub .inner { max-width: 640px; }
+  /* scrollen kan, maar zonder zichtbare scrollbar (Mert wil geen "scroll options" zien) */
+  .sub .inner { position: relative; z-index: 2; width: min(100%, 1080px); max-height: 100%; overflow-y: auto; scrollbar-width: none; }
+  .sub .inner::-webkit-scrollbar { display: none; }
   .sub .kicker { font-size: 12px; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; color: var(--accent); margin-bottom: 14px; }
-  .sub h2 { font-size: clamp(40px, 6vw, 72px); font-weight: 800; letter-spacing: -0.03em; line-height: 1; margin-bottom: 18px; }
-  .sub p { font-size: 17px; line-height: 1.6; color: var(--muted); }
+  .sub h2 { font-size: clamp(34px, 4.6vw, 60px); font-weight: 800; letter-spacing: -0.03em; line-height: 1; margin-bottom: 18px; }
+  .sub p { font-size: 16.5px; line-height: 1.6; color: var(--muted); }
+
+  /* gedeelde bouwstenen in de site-stijl: wit papier, inkt-rand, offset-schaduw */
+  .chip {
+    display: inline-flex; align-items: center; gap: 7px;
+    background: #fff; border: 2px solid var(--line); border-radius: 999px;
+    padding: 6px 13px; font-size: 13.5px; font-weight: 600; color: var(--ink);
+    box-shadow: 2px 2px 0 var(--line);
+    transition: transform 0.18s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  .chip:hover { transform: rotate(0deg) translateY(-3px); }
+
+  /* --- About: polaroid links, verhaal rechts --- */
+  .about-grid { display: grid; grid-template-columns: minmax(220px, 300px) 1fr; gap: clamp(28px, 4vw, 64px); align-items: center; }
+  /* rauwe cutout-foto tegen de onderrand geankerd, zoals de cartoon op home
+     (polaroid eruit op Merts verzoek 17 jul); zit buiten .inner zodat hij
+     niet meescrollt en de onderkant nooit los in beeld hangt */
+  .about-photo {
+    position: absolute; z-index: 1; left: clamp(32px, 8vw, 150px); bottom: -8px;
+    height: min(74vh, 640px); width: auto; display: block;
+    filter: drop-shadow(12px 12px 0 rgba(143, 62, 28, 0.35)) drop-shadow(0 18px 28px rgba(34, 39, 43, 0.16));
+  }
+  .about-grid { grid-template-columns: minmax(240px, 360px) 1fr; }
+  .about-grid .about-spacer { min-height: 1px; }
+  .sub.pos-up h2 { color: var(--ink); }
+  .sub.pos-up p { color: #4A3312; max-width: 52ch; } /* 52ch: blijft vrij van de terugknop rechts */
+  .about-text p + p { margin-top: 12px; }
+  .facts { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 22px; }
+
+  /* --- Projects: kop links, kaarten rechts --- */
+  /* minmax(0,1fr): anders duwen de screenshots de tracks breder dan de container */
+  .proj-layout { display: grid; grid-template-columns: minmax(200px, 280px) minmax(0, 1fr); gap: clamp(26px, 4vw, 56px); align-items: center; }
+  .proj-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 18px; }
+  .proj-card {
+    display: block; min-width: 0; text-decoration: none; color: var(--ink);
+    background: #fff; border: 2px solid var(--line); border-radius: 16px;
+    box-shadow: 4px 4px 0 var(--line); padding: 14px;
+    transition: transform 0.22s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.22s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  .proj-card:hover { transform: translate(-3px, -3px) rotate(-0.4deg); box-shadow: 8px 8px 0 var(--line); }
+  .thumb {
+    height: 108px; border-radius: 10px; border: 1.5px solid var(--hairline);
+    overflow: hidden; display: grid; place-items: center; margin-bottom: 12px; background: var(--bg);
+  }
+  .thumb img { width: 100%; height: 100%; object-fit: cover; object-position: top; }
+  .thumb.thumb-app img { object-position: 50% 26%; } /* stukje onder de statusbalk */
+  .thumb.thumb-me img { object-position: 50% 10%; }  /* hoofd van de cartoon in beeld */
+  /* placeholder-thumbnail zolang er nog geen echte screenshot is */
+  .thumb.ph {
+    font-size: 12px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted);
+    background: repeating-linear-gradient(-45deg, var(--bg) 0 12px, #E9E4D2 12px 24px);
+  }
+  .proj-card h3 { display: flex; align-items: center; gap: 7px; font-size: 17px; margin-bottom: 4px; }
+  .proj-card h3 svg { width: 15px; height: 15px; flex: 0 0 auto; color: var(--primary); }
+  .sub .proj-card .pdesc { color: var(--muted); font-size: 13.5px; line-height: 1.45; margin-bottom: 11px; }
+  .tags { display: flex; flex-wrap: wrap; gap: 6px; }
+  .tag { font-size: 11px; font-weight: 700; padding: 3px 9px; border: 1.5px solid var(--line); border-radius: 999px; background: var(--bg); color: var(--ink); }
+
+  /* --- Skills: groepen met chips, licht scheefgezet als stickers --- */
+  .skills-inner { max-width: 780px; }
+  .sk-intro { max-width: 52ch; }
+  .skill-groups { display: grid; gap: 26px; margin-top: 26px; }
+  .sgroup h3 { font-size: 13px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent); margin-bottom: 12px; }
+  .sgroup .chips { display: flex; flex-wrap: wrap; gap: 10px; }
+  .sgroup .chip:nth-child(3n)   { transform: rotate(1.6deg); }
+  .sgroup .chip:nth-child(3n+1) { transform: rotate(-1.2deg); }
+  .sgroup .chip:hover { transform: rotate(0deg) translateY(-3px); }
+
+  /* --- Contact: gecentreerd, mailadres kopieerbaar --- */
+  .contact-inner { text-align: center; display: grid; justify-items: center; }
+  .sub.pos-left h2 { color: var(--ink); }
+  .sub.pos-left p { max-width: 44ch; }
+  /* direct-bericht formulier (17 jul, verving de mailto/GitHub-knoppen op Merts verzoek) */
+  .contact-form {
+    width: min(100%, 540px); text-align: left; margin-top: 24px;
+    background: #fff; border: 2px solid var(--line); border-radius: 18px;
+    box-shadow: 5px 5px 0 var(--line); padding: 20px;
+    display: grid; gap: 13px;
+  }
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .field { display: grid; gap: 6px; }
+  .field span { font-size: 11px; font-weight: 700; letter-spacing: 0.09em; text-transform: uppercase; color: var(--muted); }
+  .field input, .field textarea {
+    font: inherit; font-size: 14.5px; font-weight: 600; color: var(--ink);
+    background: var(--bg); border: 2px solid var(--line); border-radius: 12px;
+    padding: 9px 12px; min-width: 0; resize: vertical;
+    user-select: text; -webkit-user-select: text;
+    transition: border-color 0.18s ease, background 0.18s ease;
+  }
+  .field input:focus, .field textarea:focus { outline: none; border-color: var(--primary); background: #fff; }
+  .send-btn { justify-self: end; }
+  .send-btn:disabled { opacity: 0.6; }
+  .contact-row { display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 12px; margin-top: 18px; }
+  .mail-card {
+    display: inline-flex; align-items: center; gap: 12px;
+    background: #fff; border: 2px solid var(--line); border-radius: 999px;
+    box-shadow: 4px 4px 0 var(--line); padding: 8px 10px 8px 20px;
+  }
+  /* mailadres moet kopieerbaar blijven (user-select staat globaal uit) */
+  .mail-card .addr { font-size: clamp(15px, 2vw, 21px); font-weight: 700; color: var(--ink); user-select: text; -webkit-user-select: text; }
+  .copy-btn {
+    font: inherit; font-size: 13px; font-weight: 700; color: var(--ink);
+    border: 2px solid var(--line); background: var(--bg); border-radius: 999px; padding: 8px 14px;
+    transition: background 0.18s ease, transform 0.18s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  .copy-btn:hover { background: var(--second); transform: translateY(-2px); }
+  .cta {
+    display: inline-flex; align-items: center; gap: 8px; text-decoration: none;
+    font: inherit; color: var(--ink); font-weight: 700; font-size: 14.5px;
+    background: #fff; border: 2px solid var(--line); border-radius: 999px; padding: 10px 18px;
+    box-shadow: 3px 3px 0 var(--line);
+    transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  .cta:hover { transform: translate(-2px, -2px); box-shadow: 5px 5px 0 var(--line); }
+  .cta svg { width: 16px; height: 16px; }
+  .cta.primary { background: var(--primary); color: #fff; }
+  .contact-meta { display: flex; align-items: center; gap: 10px; font-size: 13.5px; font-weight: 600; color: var(--muted); margin-top: 24px; }
+  .contact-meta .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--primary); }
   /* circle-reveal navigatie: pagina cirkelt uit de dock-knop open, de ronde
      terugknop zit op dezelfde plek en zuigt hem weer terug */
   .panel.circle-mode { position: fixed; top: 0; left: 0; z-index: 30; will-change: clip-path; }
@@ -198,13 +317,15 @@
      LET OP: absolute (niet fixed), anders blijft hij op het scherm hangen
      als zijn panel weer buiten beeld geparkeerd wordt (bug 16 jul) */
   .back-circle {
-    position: absolute; translate: -50% -50%; width: 52px; height: 52px;
+    position: absolute; z-index: 5; translate: -50% -50%; width: 52px; height: 52px;
     border-radius: 50%; background: #fff; border: 2px solid var(--line);
     box-shadow: 3px 3px 0 var(--line); display: grid; place-items: center;
     color: var(--ink); padding: 0;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    transition: transform 0.12s ease, box-shadow 0.12s ease;
   }
   .back-circle:hover, .back-circle:focus-visible { transform: scale(1.1); box-shadow: 4px 4px 0 var(--line); }
+  /* pressing depth: knop zakt bij het klikken in de richting van zijn schaduw */
+  .back-circle:active { transform: scale(0.94) translate(2px, 2px); box-shadow: 1px 1px 0 var(--line); }
   .back-circle svg { width: 24px; height: 24px; }
 
 
@@ -221,26 +342,38 @@
     .dock-label { display: none; } /* geen hover op touch */
     .dock-item::after { display: none; } /* selectiepijltje ook niet op mobiel */
     .bio { margin-left: auto; margin-right: auto; }
+    /* subpagina's: enkele kolom, content scrollt binnen .inner (back-circle blijft staan) */
+    .sub { padding: 84px 20px 40px; place-items: start center; }
+    .about-grid, .proj-layout { grid-template-columns: 1fr; gap: 26px; align-items: start; }
+    /* mobiel: foto gewoon in de flow, niet absoluut */
+    .about-photo { position: static; height: auto; width: min(58%, 210px); margin: 0 auto; order: -1; }
+    .about-grid .about-spacer { display: none; }
+    .proj-grid { grid-template-columns: 1fr; }
+    .contact-inner { text-align: center; }
+    .form-row { grid-template-columns: 1fr; }
+    .mail-card { flex-direction: column; gap: 10px; padding: 14px 18px; border-radius: 22px; }
   }
 </style>
 </head>
 <body>
+  <!-- goo-filter voor de liquid trail (gedeeld door alle panels) -->
+  <svg aria-hidden="true" style="position:absolute;width:0;height:0">
+    <defs>
+      <filter id="goo">
+        <feGaussianBlur in="SourceGraphic" stdDeviation="7" result="blur" />
+        <feColorMatrix in="blur" type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 19 -9" result="goo" />
+        <feComposite in="SourceGraphic" in2="goo" operator="atop" />
+      </filter>
+    </defs>
+  </svg>
+
   <div class="viewport">
     <div class="track" id="track">
 
       <!-- ============ HOME ============ -->
       <section class="panel home">
-        <!-- gooey pixel trail (21st.dev @danielpetho gooey-filter, geport naar vanilla) -->
-        <svg aria-hidden="true" style="position:absolute;width:0;height:0">
-          <defs>
-            <filter id="goo">
-              <feGaussianBlur in="SourceGraphic" stdDeviation="5" result="blur" />
-              <feColorMatrix in="blur" type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 19 -9" result="goo" />
-              <feComposite in="SourceGraphic" in2="goo" operator="atop" />
-            </filter>
-          </defs>
-        </svg>
-        <div id="pixelCanvas" aria-hidden="true"></div>
+        <!-- liquid trail (verving de gooey pixel-grid op 17 jul) -->
+        <canvas class="trail-canvas" aria-hidden="true"></canvas>
 
         <div class="topbar">
           <div class="lang"><button class="on">NL</button><button>EN</button></div>
@@ -283,28 +416,135 @@
 
       <!-- ============ SUBPAGES: elk een eigen windrichting ============ -->
       <section class="panel sub pos-up">
+        <canvas class="trail-canvas" aria-hidden="true"></canvas>
         <button class="back-circle" data-target="0" aria-label="Terug">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/><path d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
         </button>
-        <div class="inner"><div class="kicker">About</div><h2>About me</h2><p>Deze pagina bouwen we straks.</p></div>
+        <img class="about-photo s-rv" src="assets/portrait-cutout.png" alt="Foto van Mert" />
+        <div class="inner">
+          <div class="about-grid">
+            <div class="about-spacer" aria-hidden="true"></div>
+            <div class="about-text">
+              <div class="kicker s-rv">About</div>
+              <h2 class="s-rv">Ik ben Mert.</h2>
+              <p class="s-rv">27, uit Arnhem. Ik begon met een MBO-opleiding applicatieontwikkeling en zit nu in mijn derde jaar HBO-ICT aan de Hogeschool Utrecht. Ik bouw met React Native, React en TypeScript, en ik ontwerp het liefst zelf wat ik daarna bouw.</p>
+              <p class="s-rv">Naast mijn studie werk ik als freelance designer en developer. Ik maak websites voor ondernemers en bouw mijn eigen app, ChoreShare, een huishoud-app voor studentenhuizen die ik van nul heb opgezet.</p>
+              <p class="s-rv">Waar ik naartoe werk: een developer zijn die je een probleem geeft en een afgemaakt product teruggeeft. Geen half werk, geen buzzwords. In mijn vrije tijd vind je me aan de boulderwand of achter een film.</p>
+              <div class="facts">
+                <span class="chip s-rv">HBO-ICT, Hogeschool Utrecht</span>
+                <span class="chip s-rv">Freelance designer en developer</span>
+                <span class="chip s-rv">Boulderen</span>
+                <span class="chip s-rv">Films en series</span>
+              </div>
+            </div>
+          </div>
+        </div>
       </section>
       <section class="panel sub pos-right">
+        <canvas class="trail-canvas" aria-hidden="true"></canvas>
         <button class="back-circle" data-target="0" aria-label="Terug">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/><path d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
         </button>
-        <div class="inner"><div class="kicker">Work</div><h2>Projects</h2><p>Hier komen de projectkaarten: ChoreShare, EventKit, en meer.</p></div>
+        <div class="inner">
+          <div class="proj-layout">
+            <div class="proj-head">
+              <div class="kicker s-rv">Work</div>
+              <h2 class="s-rv">Projects</h2>
+              <p class="s-rv">Een greep uit wat ik de afgelopen tijd heb ontworpen en gebouwd.</p>
+            </div>
+            <div class="proj-grid">
+              <article class="proj-card s-rv">
+                <div class="thumb thumb-app"><img src="assets/screen-taken.png" alt="Screenshot van de ChoreShare app" /></div>
+                <h3>ChoreShare</h3>
+                <p class="pdesc">Huishoud-app voor studentenhuizen. Van nul opgezet: design, app en backend.</p>
+                <div class="tags"><span class="tag">React Native</span><span class="tag">Expo</span><span class="tag">Firebase</span><span class="tag">TypeScript</span></div>
+              </article>
+              <a class="proj-card s-rv" href="https://choreshare.nl" target="_blank" rel="noopener">
+                <div class="thumb ph">Screenshot volgt</div>
+                <h3>ChoreShare.nl <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 7h10v10"/><path d="M7 17 17 7"/></svg></h3>
+                <p class="pdesc">Marketingsite voor de app. Statische one-pager met vloeiende animaties.</p>
+                <div class="tags"><span class="tag">HTML en CSS</span><span class="tag">GSAP</span><span class="tag">Vercel</span></div>
+              </a>
+              <article class="proj-card s-rv">
+                <div class="thumb ph">Screenshot volgt</div>
+                <h3>EventKit</h3>
+                <p class="pdesc">Festival-app, teamproject aan de HU. Backend endpoints en de profielpagina gebouwd.</p>
+                <div class="tags"><span class="tag">React Native</span><span class="tag">Node.js</span><span class="tag">Fastify</span><span class="tag">MySQL</span></div>
+              </article>
+              <article class="proj-card s-rv">
+                <div class="thumb thumb-me"><img src="assets/cartoon.png?v=8" alt="" /></div>
+                <h3>Portfolio</h3>
+                <p class="pdesc">Deze site. Handgetekende stijl, gebouwd zonder framework.</p>
+                <div class="tags"><span class="tag">HTML en CSS</span><span class="tag">GSAP</span><span class="tag">Vanilla JS</span></div>
+              </article>
+            </div>
+          </div>
+        </div>
       </section>
       <section class="panel sub pos-down">
+        <canvas class="trail-canvas" aria-hidden="true"></canvas>
         <button class="back-circle" data-target="0" aria-label="Terug">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/><path d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
         </button>
-        <div class="inner"><div class="kicker">Stack</div><h2>Skills</h2><p>Hier komt de skill-set en tooling.</p></div>
+        <div class="inner skills-inner">
+          <div class="kicker s-rv">Stack</div>
+          <h2 class="s-rv">Skills</h2>
+          <p class="s-rv sk-intro">Waar ik dagelijks mee bouw, en wat daaromheen nodig is om het ook echt af te maken.</p>
+          <div class="skill-groups">
+            <div class="sgroup s-rv">
+              <h3>Frontend</h3>
+              <div class="chips">
+                <span class="chip">React Native</span><span class="chip">Expo</span><span class="chip">React</span><span class="chip">TypeScript</span><span class="chip">JavaScript</span><span class="chip">HTML en CSS</span><span class="chip">GSAP</span>
+              </div>
+            </div>
+            <div class="sgroup s-rv">
+              <h3>Backend en data</h3>
+              <div class="chips">
+                <span class="chip">Node.js</span><span class="chip">Fastify</span><span class="chip">MySQL</span><span class="chip">Firebase</span>
+              </div>
+            </div>
+            <div class="sgroup s-rv">
+              <h3>Tools en werkwijze</h3>
+              <div class="chips">
+                <span class="chip">Git en GitHub</span><span class="chip">Azure</span><span class="chip">Vercel</span><span class="chip">Figma</span><span class="chip">Claude Code</span>
+              </div>
+            </div>
+          </div>
+        </div>
       </section>
       <section class="panel sub pos-left">
+        <canvas class="trail-canvas" aria-hidden="true"></canvas>
         <button class="back-circle" data-target="0" aria-label="Terug">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/><path d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
         </button>
-        <div class="inner"><div class="kicker">Say hi</div><h2>Contact</h2><p>Hier komen je mail en socials.</p></div>
+        <div class="inner contact-inner">
+          <div class="kicker s-rv">Say hi</div>
+          <h2 class="s-rv">Zeg hoi.</h2>
+          <p class="s-rv">Een website of app nodig, of gewoon een vraag? Stuur me direct een bericht.</p>
+          <form class="contact-form s-rv" id="contactForm" novalidate>
+            <div class="form-row">
+              <label class="field"><span>Naam</span><input type="text" name="name" required placeholder="Je naam" /></label>
+              <label class="field"><span>E-mail</span><input type="email" name="email" required placeholder="jij@voorbeeld.nl" /></label>
+            </div>
+            <label class="field"><span>Bericht</span><textarea name="message" rows="4" required placeholder="Waar kan ik je mee helpen?"></textarea></label>
+            <input type="text" name="_honey" style="display:none" tabindex="-1" autocomplete="off" />
+            <button class="cta primary send-btn" type="submit">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.536 21.686a.5.5 0 0 0 .937-.024l6.5-19a.496.496 0 0 0-.635-.635l-19 6.5a.5.5 0 0 0-.024.937l7.93 3.18a2 2 0 0 1 1.112 1.11z"/><path d="m21.854 2.147-10.94 10.939"/></svg>
+              <span class="send-label">Verstuur</span>
+            </button>
+          </form>
+          <div class="contact-row s-rv">
+            <div class="mail-card">
+              <span class="addr" id="mailAddr">mertanil_61@outlook.com</span>
+              <button class="copy-btn" id="copyMail">Kopieer</button>
+            </div>
+            <a class="cta" href="https://github.com/MertHU" target="_blank" rel="noopener">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"/><path d="M9 18c-4.51 2-5-2-7-2"/></svg>
+              GitHub
+            </a>
+          </div>
+          <div class="contact-meta s-rv"><span class="dot"></span> Arnhem, NL</div>
+        </div>
       </section>
 
     </div>
@@ -327,15 +567,20 @@
       document.querySelector(".panel.pos-down"),   /* 3 skills   */
       document.querySelector(".panel.pos-left"),   /* 4 contact  */
     ];
-    let activePanel = null, circleOrigin = null;
+    let activePanel = null, circleOrigin = null, originBtn = null;
     const coverRadius = (x, y) =>
       Math.hypot(Math.max(x, window.innerWidth - x), Math.max(y, window.innerHeight - y));
     const circleClip = (r) => {
       activePanel.style.clipPath = "circle(" + r + "px at " + circleOrigin.x + "px " + circleOrigin.y + "px)";
     };
+    /* SPIRAAL-MORPH (17 jul, Merts idee): het dock-icoon spiraalt naar binnen,
+       het home-icoon van de terugknop spiraalt op exact dezelfde plek terug
+       naar buiten, en dan pas klapt de pagina cirkelend open. Terug idem
+       in omgekeerde volgorde. */
     function openCircle(i, btn) {
       animating = true;
       activePanel = PANELS[i];
+      originBtn = btn;
       const b = btn.getBoundingClientRect();
       circleOrigin = { x: b.left + b.width / 2, y: b.top + b.height / 2 };
       const back = activePanel.querySelector(".back-circle");
@@ -344,26 +589,57 @@
       activePanel.classList.add("circle-mode");
       circleClip(0);
       current = i;
+      const dockIcon = btn.querySelector("svg");
+      const backIcon = back.querySelector("svg");
       const prox = { r: 0 };
-      gsap.to(prox, {
-        r: coverRadius(circleOrigin.x, circleOrigin.y), duration: 0.9, ease: "power3.inOut",
-        onUpdate: () => circleClip(prox.r),
-        onComplete: () => { activePanel.style.clipPath = "none"; animating = false; },
-      });
+      const setR = () => circleClip(prox.r);
+      const tl = gsap.timeline({ onComplete: () => { animating = false; } });
+      /* spiraal en pagina-opening lopen grotendeels TEGELIJK (Merts feedback 17 jul):
+         icoon-wissel start meteen en de cirkel klapt er direct overheen open */
+      tl.to(dockIcon, { rotation: -180, scale: 0, duration: 0.28, ease: "power2.in", transformOrigin: "50% 50%" }, 0);
+      tl.to(prox, { r: 27, duration: 0.18, ease: "power2.out", onUpdate: setR }, 0.08);
+      tl.fromTo(backIcon,
+        { rotation: 180, scale: 0, transformOrigin: "50% 50%" },
+        { rotation: 0, scale: 1, duration: 0.4, ease: "back.out(1.7)" }, 0.18);
+      tl.to(prox, {
+        r: coverRadius(circleOrigin.x, circleOrigin.y), duration: 0.85, ease: "power3.inOut",
+        onUpdate: setR,
+        onComplete: () => { activePanel.style.clipPath = "none"; },
+      }, 0.26);
+      /* content van de pagina komt gestaggered binnen terwijl de cirkel opent */
+      gsap.fromTo(activePanel.querySelectorAll(".s-rv"),
+        { opacity: 0, y: 18 },
+        { opacity: 1, y: 0, duration: 0.6, ease: "power3.out", stagger: 0.07, delay: 0.55, overwrite: "auto" });
     }
     function closeCircle() {
       animating = true;
+      const back = activePanel.querySelector(".back-circle");
+      const backIcon = back.querySelector("svg");
+      const dockIcon = originBtn ? originBtn.querySelector("svg") : null;
       const prox = { r: coverRadius(circleOrigin.x, circleOrigin.y) };
-      gsap.to(prox, {
-        r: 0, duration: 0.75, ease: "power3.inOut",
-        onUpdate: () => circleClip(prox.r),
+      const setR = () => circleClip(prox.r);
+      const tl = gsap.timeline({
         onComplete: () => {
           activePanel.classList.remove("circle-mode");
           activePanel.style.clipPath = "";
+          gsap.set(activePanel, { opacity: 1 });
           activePanel = null;
           current = 0; animating = false;
         },
       });
+      /* pagina zuigt terug tot het knopje (oude tempo) */
+      tl.to(prox, { r: 27, duration: 0.55, ease: "power3.inOut", onUpdate: setR }, 0);
+      tl.to(backIcon, { rotation: 180, scale: 0, duration: 0.22, ease: "power2.in" }, 0.25);
+      /* GEEN laatste krimp-naar-nul meer: de sluit-cirkel eindigt precies op het
+         dock-knopje en zou het icoon anders tot het allerlaatste moment bedekken.
+         In plaats daarvan lost het mini-rondje OP terwijl het dock-icoon er al
+         doorheen zichtbaar terugdraait (crossfade-swap, Merts feedback 17 jul) */
+      tl.to(activePanel, { opacity: 0, duration: 0.22, ease: "power1.out" }, 0.5);
+      if (dockIcon) {
+        tl.fromTo(dockIcon,
+          { rotation: -180, scale: 0 },
+          { rotation: 0, scale: 1, duration: 0.34, ease: "back.out(1.7)" }, 0.44);
+      }
     }
     function goTo(i, srcEl) {
       i = Math.max(0, Math.min(PANELS.length - 1, i));
@@ -432,37 +708,139 @@
     document.addEventListener("mouseup", () => document.documentElement.classList.remove("pressing"));
     document.addEventListener("mouseleave", () => document.documentElement.classList.remove("pressing"));
 
-    // gooey pixel trail: muis laat blokjes achter die door het SVG-filter samensmelten
-    const pixelCanvas = document.getElementById("pixelCanvas");
-    let pxSize = 28, pxCols = 0, pxCells = [], pxTimers = [];
-    function buildPixelGrid() {
-      pxSize = window.innerWidth < 980 ? 22 : 28;
-      pxCols = Math.ceil(pixelCanvas.clientWidth / pxSize);
-      const pxRows = Math.ceil(pixelCanvas.clientHeight / pxSize);
-      pixelCanvas.style.gridTemplateColumns = "repeat(" + pxCols + ", 1fr)";
-      pixelCanvas.style.gridTemplateRows = "repeat(" + pxRows + ", 1fr)";
-      pixelCanvas.innerHTML = "";
-      pxCells = []; pxTimers = [];
-      const frag = document.createDocumentFragment();
-      for (let i = 0; i < pxCols * pxRows; i++) {
-        const d = document.createElement("div");
-        frag.appendChild(d); pxCells.push(d); pxTimers.push(0);
-      }
-      pixelCanvas.appendChild(frag);
-    }
-    buildPixelGrid();
-    window.addEventListener("resize", buildPixelGrid);
-    window.addEventListener("mousemove", (e) => {
-      if (current !== 0) return;
-      const r = pixelCanvas.getBoundingClientRect();
-      if (e.clientX < r.left || e.clientY < r.top || e.clientX >= r.right || e.clientY >= r.bottom) return;
-      const i = Math.floor((e.clientX - r.left) / pxSize) + Math.floor((e.clientY - r.top) / pxSize) * pxCols;
-      const cell = pxCells[i];
-      if (!cell) return;
-      cell.classList.add("on");
-      clearTimeout(pxTimers[i]);
-      pxTimers[i] = setTimeout(() => cell.classList.remove("on"), 500);
+    // liquid trail: een sliert volgpunten stroomt achter de muis aan, het goo-filter
+    // smelt de cirkels tot een vloeibare waterdruppel-staart (verving de pixel-grid)
+    // kleur per pagina, steeds een tint van de eigen achtergrond
+    const TRAIL_COLORS = ["#EFD9C8", "#F6BE68", "#CE7145", "#A65C33", "#E2BE9F"];
+    const trailPanels = [document.querySelector(".panel.home"), ...PANELS.slice(1)];
+    const trailCtx = trailPanels.map((p) => {
+      const c = p.querySelector(".trail-canvas");
+      return { c, ctx: c.getContext("2d") };
     });
+    function sizeTrailCanvases() {
+      trailCtx.forEach(({ c, ctx }) => {
+        c.width = c.clientWidth * devicePixelRatio;
+        c.height = c.clientHeight * devicePixelRatio;
+        ctx.setTransform(devicePixelRatio, 0, 0, devicePixelRatio, 0, 0);
+      });
+    }
+    sizeTrailCanvases();
+    window.addEventListener("resize", sizeTrailCanvases);
+    if (window.matchMedia("(pointer: fine)").matches) {
+      const TRAIL_N = 22, TRAIL_R = 15;
+      const pts = Array.from({ length: TRAIL_N }, () => ({ x: -300, y: -300 }));
+      let tmx = -300, tmy = -300, lastMove = 0, melt = 0, prevPage = 0, primed = false;
+      window.addEventListener("mousemove", (e) => {
+        tmx = e.clientX; tmy = e.clientY; lastMove = performance.now();
+        // eerste beweging (of na wegsmelten): staart op de cursor laten beginnen,
+        // anders trekt er een lange streep vanaf de oude plek over het scherm
+        if (!primed) {
+          pts.forEach((p) => { p.x = tmx; p.y = tmy; });
+          primed = true;
+        }
+      });
+      (function drawTrail(now) {
+        // bij paginawissel: staart resetten op de muis, anders schiet er een streep over het scherm
+        if (current !== prevPage) {
+          pts.forEach((p) => { p.x = tmx; p.y = tmy; });
+          prevPage = current;
+        }
+        // kop vloeit naar de muis, elk volgend punt naar zijn voorganger
+        pts[0].x += (tmx - pts[0].x) * 0.38;
+        pts[0].y += (tmy - pts[0].y) * 0.38;
+        for (let i = 1; i < TRAIL_N; i++) {
+          pts[i].x += (pts[i - 1].x - pts[i].x) * 0.32;
+          pts[i].y += (pts[i - 1].y - pts[i].y) * 0.32;
+        }
+        // druppel smelt weg als de muis stilligt, en groeit terug bij beweging
+        const target = now - lastMove < 1400 ? 1 : 0;
+        melt += (target - melt) * 0.06;
+        if (melt < 0.02 && target === 0) primed = false;
+        trailCtx.forEach(({ c, ctx }, page) => {
+          ctx.clearRect(0, 0, c.clientWidth, c.clientHeight);
+          if (page !== current || melt < 0.02) return;
+          ctx.fillStyle = TRAIL_COLORS[page];
+          ctx.strokeStyle = TRAIL_COLORS[page];
+          ctx.lineCap = "round"; ctx.lineJoin = "round";
+          for (let i = 0; i < TRAIL_N; i++) {
+            // licht golvende radius zodat de sliert organisch blijft wiebelen
+            const wob = 1 + 0.12 * Math.sin(now / 300 + i * 0.7);
+            const r = Math.max(0.1, (TRAIL_R - i * 0.58) * melt * wob);
+            ctx.beginPath();
+            ctx.arc(pts[i].x, pts[i].y, r, 0, Math.PI * 2);
+            ctx.fill();
+            // taps toelopend lijnstuk naar het vorige punt: zo blijft de sliert
+            // ook bij snelle bewegingen een doorlopend waterstraaltje
+            if (i > 0) {
+              ctx.beginPath();
+              ctx.moveTo(pts[i - 1].x, pts[i - 1].y);
+              ctx.lineTo(pts[i].x, pts[i].y);
+              ctx.lineWidth = r * 2;
+              ctx.stroke();
+            }
+          }
+        });
+        requestAnimationFrame(drawTrail);
+      })(performance.now());
+    }
+
+    // kopieerknop op Contact: mailadres naar het klembord, korte bevestiging
+    const copyBtn = document.getElementById("copyMail");
+    if (copyBtn) {
+      copyBtn.addEventListener("click", async () => {
+        const addr = document.getElementById("mailAddr").textContent;
+        try {
+          await navigator.clipboard.writeText(addr);
+        } catch (e) {
+          /* fallback voor browsers zonder clipboard-permissie */
+          const ta = document.createElement("textarea");
+          ta.value = addr;
+          ta.style.cssText = "position:fixed;opacity:0;user-select:text";
+          document.body.appendChild(ta);
+          ta.select();
+          document.execCommand("copy");
+          ta.remove();
+        }
+        copyBtn.textContent = "Gekopieerd!";
+        setTimeout(() => { copyBtn.textContent = "Kopieer"; }, 1600);
+      });
+    }
+
+    // direct bericht via FormSubmit (statische site, geen eigen backend);
+    // LET OP: de allereerste inzending stuurt een activatiemail naar Merts adres
+    const contactForm = document.getElementById("contactForm");
+    if (contactForm) {
+      contactForm.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        if (!contactForm.reportValidity()) return;
+        const btn = contactForm.querySelector(".send-btn");
+        const label = btn.querySelector(".send-label");
+        const data = Object.fromEntries(new FormData(contactForm).entries());
+        if (data._honey) return; /* honeypot: bots vullen dit veld */
+        btn.disabled = true; label.textContent = "Versturen...";
+        try {
+          const res = await fetch("https://formsubmit.co/ajax/mertanil_61@outlook.com", {
+            method: "POST",
+            headers: { "Content-Type": "application/json", "Accept": "application/json" },
+            body: JSON.stringify({
+              name: data.name, email: data.email, message: data.message,
+              _subject: "Nieuw bericht via de portfolio-site",
+            }),
+          });
+          if (!res.ok) throw new Error("versturen mislukt");
+          contactForm.reset();
+          label.textContent = "Verstuurd!";
+        } catch (err) {
+          /* vangnet: open de mail-app met het bericht voorgevuld */
+          location.href = "mailto:mertanil_61@outlook.com?subject=" +
+            encodeURIComponent("Bericht via de portfolio-site") + "&body=" +
+            encodeURIComponent(data.message + "\n\n" + data.name + " (" + data.email + ")");
+        } finally {
+          btn.disabled = false;
+          setTimeout(() => { label.textContent = "Verstuur"; }, 2200);
+        }
+      });
+    }
 
     // dock-magnificatie: knoppen zwellen op naarmate de muis dichterbij komt (macOS-dock)
     if (window.matchMedia("(pointer: fine)").matches) {
@@ -507,9 +885,17 @@
       });
     }
 
-    // intro reveal
+    // intro reveal; de krabbel en de pijl tekenen zichzelf daarna in (stroke-dash)
     window.addEventListener("load", () => {
       gsap.to(".rv", { opacity: 1, y: 0, duration: 0.8, ease: "power3.out", stagger: 0.09, delay: 0.15 });
+      document.querySelectorAll(".squiggle path, .doodle-arrow path").forEach((p) => {
+        const len = p.getTotalLength();
+        p.style.strokeDasharray = len;
+        p.style.strokeDashoffset = len;
+      });
+      gsap.to(".squiggle path, .doodle-arrow path", {
+        strokeDashoffset: 0, duration: 0.9, ease: "power2.out", delay: 0.75, stagger: 0.18,
+      });
     });
 
   </script>

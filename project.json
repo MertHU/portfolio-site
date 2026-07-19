@@ -1,0 +1,9 @@
+{
+  "name": "Portfolio Site",
+  "description": "Personal portfolio website.",
+  "commands": [
+    "python -m http.server 8991"
+  ],
+  "url": "http://localhost:8991/hero-concept.html",
+  "extraClaudeTab": false
+}

@@ -104,6 +104,10 @@ Bij het maken of aanpassen van UI op deze site altijd deze skills/tools inzetten
 Dit project wordt beheerd via het Project Dashboard.
 
 - Taken staan in `tasks.json` in de projectroot. Statussen: `todo` | `doing` | `done`.
+- **BELANGRIJK — houd het takenbord automatisch bij terwijl je werkt, uit jezelf, zonder dat ik het hoef te vragen:**
+  zodra je aan een taak begint zet je die op `doing`; zodra hij af is op `done`. Doe dit live tijdens
+  de sessie, meteen — dus NIET pas als ik "sla alles op" zeg. Houd normaal één taak tegelijk op `doing`.
+  Ontstaat er onderweg een nieuwe taak, voeg 'm toe op `todo`. Ik hoor dit nooit mondeling te hoeven aangeven.
 - Werk `tasks.json` direct bij wanneer een taak af is of er een nieuwe taak ontstaat
   (behoud het schema: { "tasks": [{ id, title, status, createdAt, updatedAt }] }, timestamps ISO 8601).
 - Als de gebruiker zegt "sla alles op": werk `tasks.json` bij (afgeronde taken op `done`,

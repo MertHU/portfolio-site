@@ -1,0 +1,123 @@
+{
+  "tasks": [
+    {
+      "id": "t16",
+      "title": "Eyes-follow-cursor cartoon (home) - FIXEN: (1) pupillen iets kleiner, (2) brilrand beschadigd door erase: linkerlens linksboven weg + rechtsonder weg (cartoon-eyes.png opnieuw genereren zonder rand te raken), (3) kijkrichting klopt niet (muis naar rechts -> kijkt 'naar mij' ipv rechts), beweging heel subtiel de JUISTE kant op. Details in CLAUDE.md",
+      "status": "doing",
+      "createdAt": "2026-07-19T09:10:00Z",
+      "updatedAt": "2026-07-19T09:35:00Z"
+    },
+    {
+      "id": "t1",
+      "title": "Boulderwand skills-pagina laten beoordelen door Mert + committen",
+      "status": "doing",
+      "createdAt": "2026-07-19T08:25:00Z",
+      "updatedAt": "2026-07-19T08:25:00Z"
+    },
+    {
+      "id": "t2",
+      "title": "FormSubmit contactformulier activeren (eerste inzending bevestigen) en echt testen",
+      "status": "todo",
+      "createdAt": "2026-07-19T08:25:00Z",
+      "updatedAt": "2026-07-19T08:25:00Z"
+    },
+    {
+      "id": "t3",
+      "title": "Echte screenshots voor EventKit en ChoreShare.nl (nu placeholders); screen-calender.png is fout (ChoreShare)",
+      "status": "todo",
+      "createdAt": "2026-07-19T08:25:00Z",
+      "updatedAt": "2026-07-19T08:25:00Z"
+    },
+    {
+      "id": "t4",
+      "title": "portrait-cutout.png door rembg+alpha-workflow halen tegen witte haarrandjes",
+      "status": "todo",
+      "createdAt": "2026-07-19T08:25:00Z",
+      "updatedAt": "2026-07-19T08:25:00Z"
+    },
+    {
+      "id": "t5",
+      "title": "Hero-naam wrapt op 1440x900 naar 2 regels; Mert wil 1 regel (hero is Merts domein, afstemmen)",
+      "status": "todo",
+      "createdAt": "2026-07-19T08:25:00Z",
+      "updatedAt": "2026-07-19T08:25:00Z"
+    },
+    {
+      "id": "t6",
+      "title": "Back-circle op mobiel overlapt scrollende tekst; mobiel ontwerp nog uitwerken",
+      "status": "todo",
+      "createdAt": "2026-07-19T08:25:00Z",
+      "updatedAt": "2026-07-19T08:25:00Z"
+    },
+    {
+      "id": "t7",
+      "title": "NL/EN taalswitch werkend maken (i18n-dictionary bouwen; knoppen zijn nu dood)",
+      "status": "todo",
+      "createdAt": "2026-07-19T08:25:00Z",
+      "updatedAt": "2026-07-19T08:25:00Z"
+    },
+    {
+      "id": "t8",
+      "title": "Home-achtergrond aankleden (line-art doodles) - alleen na Merts akkoord",
+      "status": "todo",
+      "createdAt": "2026-07-19T08:25:00Z",
+      "updatedAt": "2026-07-19T08:25:00Z"
+    },
+    {
+      "id": "t9",
+      "title": "Junkbestanden root verwijderen (376, gooWordsByLang[lang], r.left, {) - op Merts akkoord",
+      "status": "todo",
+      "createdAt": "2026-07-19T08:25:00Z",
+      "updatedAt": "2026-07-19T08:25:00Z"
+    },
+    {
+      "id": "t10",
+      "title": "V2-restanten verwijderen: css/style.css en js/main.js",
+      "status": "todo",
+      "createdAt": "2026-07-19T08:25:00Z",
+      "updatedAt": "2026-07-19T08:25:00Z"
+    },
+    {
+      "id": "t11",
+      "title": "V4 goedkeuren en porten naar index.html, daarna hero-concept.html verwijderen",
+      "status": "todo",
+      "createdAt": "2026-07-19T08:25:00Z",
+      "updatedAt": "2026-07-19T08:25:00Z"
+    },
+    {
+      "id": "t12",
+      "title": "SEO/meta-tags (serp-markup-builder) + JSON-LD Person-schema voor deelbare link",
+      "status": "todo",
+      "createdAt": "2026-07-19T08:25:00Z",
+      "updatedAt": "2026-07-19T08:25:00Z"
+    },
+    {
+      "id": "t13",
+      "title": "Deploy naar Vercel en domein kiezen",
+      "status": "todo",
+      "createdAt": "2026-07-19T08:25:00Z",
+      "updatedAt": "2026-07-19T08:25:00Z"
+    },
+    {
+      "id": "t14",
+      "title": "Bevestigen of mertanil_61@outlook.com het zakelijke adres is",
+      "status": "todo",
+      "createdAt": "2026-07-19T08:25:00Z",
+      "updatedAt": "2026-07-19T08:25:00Z"
+    },
+    {
+      "id": "t15",
+      "title": "Na launch: v2-migratie naar Next.js (CV-waarde, routes, SEO, next/image)",
+      "status": "todo",
+      "createdAt": "2026-07-19T08:25:00Z",
+      "updatedAt": "2026-07-19T08:25:00Z"
+    },
+    {
+      "id": "4c094c54-49f9-4f62-b03f-c9452b3e125b",
+      "title": "Vraag aan mij Mert of ik met paint eff die ogen zelf kan verwijderen en overnieuw upload the pfp zodat jij makkelijk de ogen kan toevoegen :)",
+      "status": "doing",
+      "createdAt": "2026-07-19T06:54:08.306Z",
+      "updatedAt": "2026-07-19T06:54:10.569Z"
+    }
+  ]
+}

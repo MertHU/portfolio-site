@@ -129,14 +129,27 @@
     position: relative; display: grid; place-items: end center;
     height: calc(100% + 48px); margin-bottom: -48px; /* compensate section padding: image touches viewport bottom */
   }
-  .portrait img {
-    position: relative; z-index: 2; width: min(100%, 483px); height: auto; display: block;
-    /* cartoon.png is nu een transparante cutout, edge-mask niet meer nodig */
+  /* figuur-wrapper: draagt de muis-parallax zodat de pupillen mee bewegen */
+  .portrait-fig {
+    position: relative; z-index: 2; width: min(100%, 483px); line-height: 0;
     /* kleine overhang zodat de muis-parallax geen naad onder de figuur toont */
     margin-bottom: -10px;
+  }
+  .portrait img {
+    position: relative; z-index: 2; width: 100%; height: auto; display: block;
+    /* cartoon.png is nu een transparante cutout, edge-mask niet meer nodig */
     /* schaduw achter de figuur: harde offset in perzik (stijl van de site) + zachte diepte */
     filter: drop-shadow(14px 14px 0 rgba(228, 182, 149, 0.65)) drop-shadow(0 24px 36px rgba(34, 39, 43, 0.14));
   }
+  /* bewegende pupillen (eyes-follow-cursor): liggen over de lege ogen van cartoon-eyes.png */
+  .pupil {
+    position: absolute; z-index: 3;
+    width: 2%; aspect-ratio: 3 / 4;   /* kleine verticale ovaal, zoals Merts originele oog-dots */
+    background: #211f1e; border-radius: 50%;
+    pointer-events: none; will-change: transform;
+  }
+  .pupil-l { left: 47.6%; top: 20.1%; }
+  .pupil-r { left: 60.25%; top: 20.4%; }
   /* right dock-nav (macOS-dock magnificatie, in de eigen stijl van de site) */
   .dock {
     justify-self: center; z-index: 2;
@@ -250,15 +263,46 @@
   .tags { display: flex; flex-wrap: wrap; gap: 6px; }
   .tag { font-size: 11px; font-weight: 700; padding: 3px 9px; border: 1.5px solid var(--line); border-radius: 999px; background: var(--bg); color: var(--ink); }
 
-  /* --- Skills: groepen met chips, licht scheefgezet als stickers --- */
-  .skills-inner { max-width: 780px; }
-  .sk-intro { max-width: 52ch; }
-  .skill-groups { display: grid; gap: 26px; margin-top: 26px; }
-  .sgroup h3 { font-size: 13px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent); margin-bottom: 12px; }
-  .sgroup .chips { display: flex; flex-wrap: wrap; gap: 10px; }
-  .sgroup .chip:nth-child(3n)   { transform: rotate(1.6deg); }
-  .sgroup .chip:nth-child(3n+1) { transform: rotate(-1.2deg); }
-  .sgroup .chip:hover { transform: rotate(0deg) translateY(-3px); }
+  /* --- Skills: boulderwand (17 jul, Mert vroeg "iets leuks"): drie routes omhoog,
+     elke greep een skill, stippellijn ertussen, grades op de starttags --- */
+  .skills-layout { display: grid; grid-template-columns: minmax(220px, 300px) minmax(0, 1fr); gap: clamp(26px, 4vw, 56px); align-items: center; }
+  .sk-intro { max-width: 30ch; }
+  .sk-note { font-size: 13px; opacity: 0.75; margin-top: 10px; max-width: 30ch; }
+  .wall { position: relative; height: min(68vh, 560px); }
+  .route-lines { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+  .route-lines path { fill: none; stroke: rgba(246, 241, 228, 0.3); stroke-width: 2.5; stroke-dasharray: 8 9; stroke-linecap: round; stroke-linejoin: round; }
+  .route { position: absolute; inset: 0; margin: 0; padding: 0; list-style: none; pointer-events: none; }
+  .hold {
+    position: absolute; left: var(--x); top: var(--y); pointer-events: auto;
+    transform: translate(-50%, -50%) rotate(var(--r, 0deg));
+    padding: 8px 14px; font-size: 13.5px; font-weight: 700; color: var(--ink); white-space: nowrap;
+    border: 2px solid var(--line); box-shadow: 3px 4px 0 rgba(10, 8, 6, 0.4);
+    border-radius: 46% 54% 52% 48% / 60% 42% 58% 44%; /* blobby klimgreep */
+    transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  .hold:nth-child(even) { border-radius: 55% 45% 48% 52% / 45% 60% 40% 55%; }
+  .hold:hover { transform: translate(-50%, -50%) rotate(0deg) scale(1.09); z-index: 3; }
+  /* kalkwolkje bij het vastpakken */
+  .hold::after {
+    content: ""; position: absolute; inset: -7px; border-radius: inherit; pointer-events: none;
+    background: radial-gradient(rgba(246, 241, 228, 0.55), transparent 70%); opacity: 0;
+  }
+  .hold:hover::after { animation: chalk 0.45s ease-out; }
+  @keyframes chalk { from { opacity: 0.9; transform: scale(0.6); } to { opacity: 0; transform: scale(1.6); } }
+  .rt-fe .hold    { background: #F6F1E4; }
+  .rt-be .hold    { background: var(--accent); }
+  .rt-tools .hold { background: var(--second); }
+  .route-tag {
+    position: absolute; left: var(--x); top: var(--y);
+    transform: translate(-50%, -50%) rotate(var(--r, -3deg));
+    background: #fff; border: 2px solid var(--line); border-radius: 999px; padding: 4px 12px;
+    font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink);
+    box-shadow: 2px 2px 0 rgba(10, 8, 6, 0.4); white-space: nowrap;
+  }
+  .route-flag {
+    position: absolute; left: var(--x); top: var(--y); transform: translate(-40%, -100%);
+    width: 20px; height: 24px; color: #F6F1E4; opacity: 0.9; pointer-events: none;
+  }
 
   /* --- Contact: gecentreerd, mailadres kopieerbaar --- */
   .contact-inner { text-align: center; display: grid; justify-items: center; }
@@ -351,6 +395,14 @@
     .proj-grid { grid-template-columns: 1fr; }
     .contact-inner { text-align: center; }
     .form-row { grid-template-columns: 1fr; }
+    /* skills-wand op mobiel: routes als rijen grepen onder hun tag, geen absolute wand */
+    .skills-layout { grid-template-columns: 1fr; }
+    .wall { height: auto; display: grid; gap: 22px; }
+    .route-lines, .route-flag { display: none; }
+    .route { position: static; display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; pointer-events: auto; }
+    .hold { position: static; transform: none; }
+    .hold:hover { transform: scale(1.06); }
+    .route-tag { position: static; display: inline-block; transform: rotate(var(--r, -2deg)); margin-bottom: 10px; }
     .mail-card { flex-direction: column; gap: 10px; padding: 14px 18px; border-radius: 22px; }
   }
 </style>
@@ -390,7 +442,11 @@
         </div>
 
         <div class="portrait rv">
-          <img src="assets/cartoon.png?v=8" alt="Mert Altintas, cartoon" />
+          <div class="portrait-fig">
+            <img src="assets/cartoon-eyes.png?v=2" alt="Mert Altintas, cartoon" />
+            <span class="pupil pupil-l" aria-hidden="true"></span>
+            <span class="pupil pupil-r" aria-hidden="true"></span>
+          </div>
         </div>
 
         <!-- dock-nav (21st.dev @ibelick dock, geport naar vanilla, gefuseerd met de kompas-items) -->
@@ -486,27 +542,49 @@
         <button class="back-circle" data-target="0" aria-label="Terug">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/><path d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
         </button>
-        <div class="inner skills-inner">
-          <div class="kicker s-rv">Stack</div>
-          <h2 class="s-rv">Skills</h2>
-          <p class="s-rv sk-intro">Waar ik dagelijks mee bouw, en wat daaromheen nodig is om het ook echt af te maken.</p>
-          <div class="skill-groups">
-            <div class="sgroup s-rv">
-              <h3>Frontend</h3>
-              <div class="chips">
-                <span class="chip">React Native</span><span class="chip">Expo</span><span class="chip">React</span><span class="chip">TypeScript</span><span class="chip">JavaScript</span><span class="chip">HTML en CSS</span><span class="chip">GSAP</span>
-              </div>
+        <div class="inner">
+          <div class="skills-layout">
+            <div class="skills-head">
+              <div class="kicker s-rv">Stack</div>
+              <h2 class="s-rv">Skills</h2>
+              <p class="s-rv sk-intro">Mijn stack als boulderwand. Drie routes, elke greep een skill.</p>
+              <p class="s-rv sk-note">Frontend is m'n zwaarste route, die klim ik dagelijks.</p>
             </div>
-            <div class="sgroup s-rv">
-              <h3>Backend en data</h3>
-              <div class="chips">
-                <span class="chip">Node.js</span><span class="chip">Fastify</span><span class="chip">MySQL</span><span class="chip">Firebase</span>
+            <div class="wall">
+              <svg class="route-lines s-rv" aria-hidden="true"></svg>
+              <div class="route-group rt-fe">
+                <div class="route-tag s-rv" style="--x:20%;--y:97%">Frontend &middot; 7A</div>
+                <ul class="route" aria-label="Frontend skills">
+                  <li class="hold s-rv" style="--x:20%;--y:87%;--r:-3deg">HTML en CSS</li>
+                  <li class="hold s-rv" style="--x:13%;--y:73%;--r:2deg">JavaScript</li>
+                  <li class="hold s-rv" style="--x:24%;--y:59%;--r:-2deg">TypeScript</li>
+                  <li class="hold s-rv" style="--x:14%;--y:45%;--r:3deg">React</li>
+                  <li class="hold s-rv" style="--x:25%;--y:31%;--r:-2deg">React Native</li>
+                  <li class="hold s-rv" style="--x:15%;--y:18%;--r:2deg">Expo</li>
+                  <li class="hold s-rv" style="--x:24%;--y:6%;--r:-3deg">GSAP</li>
+                </ul>
+                <div class="route-flag" style="--x:27%;--y:3%"><svg viewBox="0 0 20 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 22V3"/><path d="M3 3l13 4-13 4"/></svg></div>
               </div>
-            </div>
-            <div class="sgroup s-rv">
-              <h3>Tools en werkwijze</h3>
-              <div class="chips">
-                <span class="chip">Git en GitHub</span><span class="chip">Azure</span><span class="chip">Vercel</span><span class="chip">Figma</span><span class="chip">Claude Code</span>
+              <div class="route-group rt-be">
+                <div class="route-tag s-rv" style="--x:54%;--y:97%;--r:2deg">Backend &middot; 6B+</div>
+                <ul class="route" aria-label="Backend skills">
+                  <li class="hold s-rv" style="--x:49%;--y:85%;--r:2deg">Firebase</li>
+                  <li class="hold s-rv" style="--x:60%;--y:64%;--r:-3deg">MySQL</li>
+                  <li class="hold s-rv" style="--x:48%;--y:43%;--r:2deg">Fastify</li>
+                  <li class="hold s-rv" style="--x:59%;--y:22%;--r:-2deg">Node.js</li>
+                </ul>
+                <div class="route-flag" style="--x:62%;--y:19%"><svg viewBox="0 0 20 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 22V3"/><path d="M3 3l13 4-13 4"/></svg></div>
+              </div>
+              <div class="route-group rt-tools">
+                <div class="route-tag s-rv" style="--x:84%;--y:97%;--r:-2deg">Tools &middot; 6B</div>
+                <ul class="route" aria-label="Tools">
+                  <li class="hold s-rv" style="--x:82%;--y:86%;--r:3deg">Git en GitHub</li>
+                  <li class="hold s-rv" style="--x:89%;--y:69%;--r:-2deg">Azure</li>
+                  <li class="hold s-rv" style="--x:80%;--y:52%;--r:2deg">Vercel</li>
+                  <li class="hold s-rv" style="--x:89%;--y:35%;--r:-3deg">Figma</li>
+                  <li class="hold s-rv" style="--x:81%;--y:19%;--r:2deg">Claude Code</li>
+                </ul>
+                <div class="route-flag" style="--x:84%;--y:16%"><svg viewBox="0 0 20 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 22V3"/><path d="M3 3l13 4-13 4"/></svg></div>
               </div>
             </div>
           </div>
@@ -871,7 +949,7 @@
     // subtiele muis-parallax op home: portrait beweegt zacht mee, doodle iets sterker (diepte)
     if (window.matchMedia("(pointer: fine)").matches) {
       const layers = [
-        { el: document.querySelector(".portrait img"), fx: 14, fy: 7 },
+        { el: document.querySelector(".portrait-fig"), fx: 14, fy: 7 },
       ].filter(l => l.el).map(l => ({
         fx: l.fx, fy: l.fy,
         xTo: gsap.quickTo(l.el, "x", { duration: 0.7, ease: "power3.out" }),
@@ -884,6 +962,61 @@
         layers.forEach(L => { L.xTo(nx * L.fx); L.yTo(ny * L.fy); });
       });
     }
+
+    // eyes-follow-cursor: de twee pupillen kijken naar de muis (alleen home, pointer:fine)
+    if (window.matchMedia("(pointer: fine)").matches) {
+      const fig = document.querySelector(".portrait-fig");
+      const pupils = [
+        { el: document.querySelector(".pupil-l"), px: 0.476, py: 0.189 },
+        { el: document.querySelector(".pupil-r"), px: 0.6025, py: 0.192 },
+      ].filter(p => p.el);
+      pupils.forEach(p => {
+        gsap.set(p.el, { xPercent: -50, yPercent: -50 });
+        p.xTo = gsap.quickTo(p.el, "x", { duration: 0.3, ease: "power2.out" });
+        p.yTo = gsap.quickTo(p.el, "y", { duration: 0.3, ease: "power2.out" });
+      });
+      if (fig && pupils.length) {
+        window.addEventListener("mousemove", (e) => {
+          if (current !== 0 || animating) return;
+          const r = fig.getBoundingClientRect();
+          const maxX = r.width * 0.007, maxY = r.width * 0.01;   // subtiele reisafstand binnen de brillenglazen
+          pupils.forEach(p => {
+            const cx = r.left + r.width * p.px;
+            const cy = r.top + r.height * p.py;
+            const dx = e.clientX - cx, dy = e.clientY - cy;
+            const d = Math.hypot(dx, dy) || 1;
+            p.xTo((dx / d) * maxX);
+            p.yTo((dy / d) * maxY);
+          });
+        });
+      }
+    }
+
+    // boulder-routes op de skills-wand: stippellijn langs de grepen van elke route,
+    // in px getekend na layout zodat de lijn altijd precies door de grepen loopt
+    const wallEl = document.querySelector(".wall");
+    const routeSvg = document.querySelector(".route-lines");
+    function drawRoutes() {
+      if (!wallEl || !routeSvg) return;
+      if (window.matchMedia("(max-width: 980px)").matches) { routeSvg.innerHTML = ""; return; }
+      const w = wallEl.clientWidth, h = wallEl.clientHeight;
+      if (!w || !h) return;
+      routeSvg.setAttribute("viewBox", "0 0 " + w + " " + h);
+      routeSvg.innerHTML = "";
+      wallEl.querySelectorAll(".route").forEach((route) => {
+        const holds = [...route.querySelectorAll(".hold")];
+        if (holds.length < 2) return;
+        /* offsetLeft/Top is het ankerpunt (translate -50% centreert erop), dus dit IS het midden */
+        const d = holds
+          .map((el, i) => (i ? "L" : "M") + el.offsetLeft + " " + el.offsetTop)
+          .join(" ");
+        const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+        path.setAttribute("d", d);
+        routeSvg.appendChild(path);
+      });
+    }
+    window.addEventListener("load", drawRoutes);
+    window.addEventListener("resize", drawRoutes);
 
     // intro reveal; de krabbel en de pijl tekenen zichzelf daarna in (stroke-dash)
     window.addEventListener("load", () => {

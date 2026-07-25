@@ -1,18 +1,109 @@
 {
   "tasks": [
     {
+      "id": "9b677333-ce37-46eb-a661-c73aa4c36630",
+      "title": "Alles van 25 jul staat ONGECOMMIT in hero-concept.html. Wel goedgekeurd: eyes-follow-cursor, pixel trail terug (alleen home), BlurFade op de hero-tekst, dock zonder pop, skills-pagina weg. Niet goedgekeurd: About en Projects.",
+      "status": "todo",
+      "createdAt": "2026-07-25T08:50:00Z",
+      "updatedAt": "2026-07-25T08:50:00Z"
+    },
+    {
+      "id": "914d1ba6-0e53-46ea-80d4-bc674bd76256",
+      "title": "Pixel trail staat nu alleen op home; de lege trail-canvassen op de drie subpagina's kunnen weg als dat definitief is",
+      "status": "todo",
+      "createdAt": "2026-07-25T08:40:00Z",
+      "updatedAt": "2026-07-25T08:40:00Z"
+    },
+    {
+      "id": "78d55b70-2248-42dd-9b98-76338d338210",
+      "title": "Contact-pagina (Nintendo Switch met de contactopties als menu-tegels) is nog niet door Mert beoordeeld",
+      "status": "todo",
+      "createdAt": "2026-07-25T08:10:00Z",
+      "updatedAt": "2026-07-25T08:10:00Z"
+    },
+    {
+      "id": "be245904-6c44-4842-bd1e-cdd0577833b7",
+      "title": "Carousel-teksten voor foto 2 en 3 zelf invullen (nu \"Nog te kiezen\"); staan in de data-titel/data-regel attributen op de img-tags",
+      "status": "todo",
+      "createdAt": "2026-07-25T08:10:00Z",
+      "updatedAt": "2026-07-25T08:10:00Z"
+    },
+    {
+      "id": "5508af5d-6cb2-41a0-959f-52b89ac742dd",
+      "title": "Mobiel (<980px) niet geverifieerd deze sessie: venster was gemaximaliseerd, resize pakte niet. Nieuwe pagina-ontwerpen nog nakijken op 375px",
+      "status": "todo",
+      "createdAt": "2026-07-25T07:40:00Z",
+      "updatedAt": "2026-07-25T07:40:00Z"
+    },
+    {
+      "id": "1c19ca02-434f-4fc1-9098-9ed2b8d12c96",
+      "title": "Echte beelden aanleveren: about-1/2/3.png (carousel, nu cream placeholders) en proj-cs/proj-an.png (bolletjes, nu gekleurde cirkels met initialen)",
+      "status": "todo",
+      "createdAt": "2026-07-25T07:40:00Z",
+      "updatedAt": "2026-07-25T08:25:00Z"
+    },
+    {
+      "id": "97be55c0-fc69-407e-9096-7c667c3bca1a",
+      "title": "contact me pagina hmm wat voor vibe wil ik hier uit kunnen halen, denk tog wel echt een nintendo switch lookalike ?? en daar in de contact opties siiii",
+      "status": "done",
+      "createdAt": "2026-07-25T06:02:18.962Z",
+      "updatedAt": "2026-07-25T07:40:00Z"
+    },
+    {
+      "id": "25969c64-5443-47fd-bbbb-aa1953125395",
+      "title": "skills pagina mag tbh weg denk niet dat iemand ooit deze pagina nuttig gaat vinden",
+      "status": "done",
+      "createdAt": "2026-07-25T06:01:16.939Z",
+      "updatedAt": "2026-07-25T06:30:00Z"
+    },
+    {
+      "id": "1d1dc30b-3cb8-4d0c-9996-d1dd4705c5e0",
+      "title": "Projects-pagina opnieuw ontwerpen. AFGEKEURD tot nu toe: bioscoopzaal, streamingplatform, en de img-sphere met vier kleine bolletjes op cream (21st.dev @tonyzebastian-port). Die bol staat er nu in en werkt (slepen met momentum, autorotatie, detailkaart), maar Mert vindt het niet goed.",
+      "status": "todo",
+      "createdAt": "2026-07-25T06:00:54.093Z",
+      "updatedAt": "2026-07-25T08:50:00Z"
+    },
+    {
+      "id": "fff81bbe-ce1d-4f80-a2ca-132dd7f6bf7d",
+      "title": "About-pagina opnieuw ontwerpen. AFGEKEURD tot nu toe: retro CRT met N64, en de 3-image carousel op cream (CircularTestimonials-port). Die carousel staat er nu in en werkt (eigen tekst per foto, autoplay, pijlen), maar Mert vindt het niet goed. Richting nog te bepalen.",
+      "status": "todo",
+      "createdAt": "2026-07-25T05:59:27.537Z",
+      "updatedAt": "2026-07-25T08:50:00Z"
+    },
+    {
+      "id": "c1f2c99d-0a94-4ff9-a1ea-79fc27006a04",
+      "title": "als de pagina geladen word is het zo standaart, ik wil graag dat items met fancy 21st dev or gsap of enig andere manier ingeladen worden. bijvoorbeeld pfp komt van beneden naar boven,  text over mij laad netjes een voor een het beeld in, de docker laad heel smooth insomehow een swipe of fadein met pop effect van pop ik ben er met van die effectjes op de edges like (O) snap je ? >> HERZIEN 25 jul: dock-pop eruit, hero-tekst met BlurFade",
+      "status": "done",
+      "createdAt": "2026-07-25T05:57:35.599Z",
+      "updatedAt": "2026-07-25T08:10:00Z"
+    },
+    {
+      "id": "e0f42fc4-837c-44f5-a046-ccb1303a5741",
+      "title": "de oude cursor tracker terug brangen de vierkante :) miscchien eff na checken of die cleaner kan. maar wel die oude style terug brengen",
+      "status": "done",
+      "createdAt": "2026-07-25T05:53:12.719Z",
+      "updatedAt": "2026-07-25T05:53:12.719Z"
+    },
+    {
       "id": "t16",
       "title": "Eyes-follow-cursor cartoon (home) - FIXEN: (1) pupillen iets kleiner, (2) brilrand beschadigd door erase: linkerlens linksboven weg + rechtsonder weg (cartoon-eyes.png opnieuw genereren zonder rand te raken), (3) kijkrichting klopt niet (muis naar rechts -> kijkt 'naar mij' ipv rechts), beweging heel subtiel de JUISTE kant op. Details in CLAUDE.md",
-      "status": "doing",
+      "status": "done",
       "createdAt": "2026-07-19T09:10:00Z",
-      "updatedAt": "2026-07-19T09:35:00Z"
+      "updatedAt": "2026-07-25T06:05:00Z"
+    },
+    {
+      "id": "t17",
+      "title": "Nieuwe opzet laten beoordelen door Mert: eyes-follow-cursor, pixel trail terug, intro-animatie, About gamekamer, Projects streaming, Contact Switch. Daarna committen",
+      "status": "todo",
+      "createdAt": "2026-07-25T06:05:00Z",
+      "updatedAt": "2026-07-25T07:40:00Z"
     },
     {
       "id": "t1",
-      "title": "Boulderwand skills-pagina laten beoordelen door Mert + committen",
-      "status": "doing",
+      "title": "VERVALLEN: boulderwand skills-pagina is verwijderd op Merts verzoek",
+      "status": "done",
       "createdAt": "2026-07-19T08:25:00Z",
-      "updatedAt": "2026-07-19T08:25:00Z"
+      "updatedAt": "2026-07-25T07:40:00Z"
     },
     {
       "id": "t2",
@@ -23,17 +114,17 @@
     },
     {
       "id": "t3",
-      "title": "Echte screenshots voor EventKit en ChoreShare.nl (nu placeholders); screen-calender.png is fout (ChoreShare)",
+      "title": "Echte screenshots voor ChoreShare.nl en Andromeda (nu ontworpen filmposters met initialen). EventKit staat niet meer op de site",
       "status": "todo",
       "createdAt": "2026-07-19T08:25:00Z",
-      "updatedAt": "2026-07-19T08:25:00Z"
+      "updatedAt": "2026-07-25T07:15:00Z"
     },
     {
       "id": "t4",
       "title": "portrait-cutout.png door rembg+alpha-workflow halen tegen witte haarrandjes",
-      "status": "todo",
+      "status": "done",
       "createdAt": "2026-07-19T08:25:00Z",
-      "updatedAt": "2026-07-19T08:25:00Z"
+      "updatedAt": "2026-07-25T07:00:00Z"
     },
     {
       "id": "t5",
@@ -65,7 +156,7 @@
     },
     {
       "id": "t9",
-      "title": "Junkbestanden root verwijderen (376, gooWordsByLang[lang], r.left, {) - op Merts akkoord",
+      "title": "Junkbestanden root verwijderen (0 byte: 376, gooWordsByLang[lang], kijkt) - op Merts akkoord",
       "status": "todo",
       "createdAt": "2026-07-19T08:25:00Z",
       "updatedAt": "2026-07-19T08:25:00Z"
@@ -115,9 +206,9 @@
     {
       "id": "4c094c54-49f9-4f62-b03f-c9452b3e125b",
       "title": "Vraag aan mij Mert of ik met paint eff die ogen zelf kan verwijderen en overnieuw upload the pfp zodat jij makkelijk de ogen kan toevoegen :)",
-      "status": "doing",
+      "status": "done",
       "createdAt": "2026-07-19T06:54:08.306Z",
-      "updatedAt": "2026-07-19T06:54:10.569Z"
+      "updatedAt": "2026-07-25T00:00:00Z"
     }
   ]
 }

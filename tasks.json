@@ -1,6 +1,258 @@
 {
   "tasks": [
     {
+      "id": "12adb75e-dba9-4713-a053-1a369010de38",
+      "title": "BUG (klein): het contactformulier heeft geen action en geen method, alleen een JS-submit-handler. Gaat er iets mis met de JS, dan herlaadt versturen simpelweg de pagina en is het bericht stilletjes weg zonder foutmelding. Fix: de FormSubmit-URL als action in de HTML zetten zodat een gewone submit ook aankomt",
+      "status": "todo",
+      "group": "bug",
+      "color": "#D14343",
+      "createdAt": "2026-07-26T01:22:00Z",
+      "updatedAt": "2026-07-26T01:22:00Z"
+    },
+    {
+      "id": "33406d39-3645-48bb-a1f7-a4d86c2dc87e",
+      "title": "INFRA: dit project heeft geen build- en geen teststap (geen package.json, geen linter, geen tests), dus niets vangt een kapotte pagina op voor de deploy. Voorstel: klein npm-script of GitHub Action die JS-syntax van de inline scripts, ontbrekende assets en console-errors op de drie pagina's controleert",
+      "status": "todo",
+      "group": "infra",
+      "color": "#3B7A8C",
+      "createdAt": "2026-07-26T01:22:00Z",
+      "updatedAt": "2026-07-26T01:22:00Z"
+    },
+    {
+      "id": "rv-01-keydown-b",
+      "title": "BUG: toets B en Esc sluiten de Switch-app terwijl je in het contactformulier typt. De keydown-listener (hero-concept.html:899) hangt op document en kijkt niet naar e.target, dus elke 'b' in Naam/E-mail/Bericht klapt het formulier dicht. Fix: keydown negeren als het doel een INPUT/TEXTAREA of contenteditable is",
+      "status": "todo",
+      "group": "bug",
+      "color": "#D14343",
+      "createdAt": "2026-07-26T01:14:34Z",
+      "updatedAt": "2026-07-26T01:14:34Z"
+    },
+    {
+      "id": "rv-02-inert-panels",
+      "title": "BUG/toegankelijkheid: de drie panels buiten beeld zitten gewoon in de tab-volgorde. Vanaf home tab je door de terugknoppen, de carouselpijlen en het complete contactformulier van onzichtbare pagina's. Fix: inert-attribuut op alle niet-actieve panels, aan/uit zetten in openCircle en closeCircle",
+      "status": "todo",
+      "group": "bug",
+      "color": "#D14343",
+      "createdAt": "2026-07-26T01:14:34Z",
+      "updatedAt": "2026-07-26T01:14:34Z"
+    },
+    {
+      "id": "rv-03-gsap-cdn",
+      "title": "BUG-risico: als de GSAP-CDN faalt of geblokkeerd wordt (adblocker, netwerk) blijft alles met class .rv op opacity 0 staan en is de pagina leeg. Fix: onerror-fallback op de script-tag die .rv zichtbaar maakt, of GSAP lokaal meeleveren. Meteen ook een SRI-hash (integrity) op de cdnjs-tag",
+      "status": "todo",
+      "group": "infra",
+      "color": "#3B7A8C",
+      "createdAt": "2026-07-26T01:14:34Z",
+      "updatedAt": "2026-07-26T01:14:34Z"
+    },
+    {
+      "id": "rv-04-loops-altijd-aan",
+      "title": "PERFORMANCE: drie animatie-loops draaien permanent door, ook op pagina's die niet zichtbaar zijn: de trail-rAF (r999), de sphere-tik-rAF (r1173) en de carousel-setInterval van 5s (r1298). De site komt dus nooit tot rust, dat kost accu op laptops. Fix: loops pauzeren bij paginawissel en op document.hidden",
+      "status": "todo",
+      "group": "perf",
+      "color": "#7C5CBF",
+      "createdAt": "2026-07-26T01:14:34Z",
+      "updatedAt": "2026-07-26T01:14:34Z"
+    },
+    {
+      "id": "rv-05-cartoon-png-gewicht",
+      "title": "PERFORMANCE: cartoon.png (668 KB) wordt geladen voor een avatar van 26px in de Switch-statusbalk en voor een projectbolletje van ~100px. Samen met cartoon-eyes.png (664 KB) is dat 1,3 MB aan bijna identieke PNG's, terwijl er maar een groot in beeld komt. Fix: kleine variant voor avatar en bolletje, plus WebP-versies",
+      "status": "todo",
+      "group": "perf",
+      "color": "#7C5CBF",
+      "createdAt": "2026-07-26T01:14:34Z",
+      "updatedAt": "2026-07-26T01:14:34Z"
+    },
+    {
+      "id": "rv-06-kijkt-gecommit",
+      "title": "OPRUIMEN: het 0-byte junkbestand 'kijkt' is per ongeluk meegecommit in 0a0819e. Het staat dus echt in de repo, anders dan 376 en gooWordsByLang[lang] die alleen genegeerd worden. git rm --cached kijkt en weghalen",
+      "status": "todo",
+      "group": "opruimen",
+      "color": "#6B6459",
+      "createdAt": "2026-07-26T01:14:34Z",
+      "updatedAt": "2026-07-26T01:14:34Z"
+    },
+    {
+      "id": "rv-07-dode-data-goto",
+      "title": "OPRUIMEN: dode code. De data-goto-handler (hero-concept.html:876-886) zoekt elementen met data-goto, maar die staan niet meer in de HTML sinds de streaming-pagina eruit ging. Kan weg",
+      "status": "todo",
+      "group": "opruimen",
+      "color": "#6B6459",
+      "createdAt": "2026-07-26T01:14:34Z",
+      "updatedAt": "2026-07-26T01:14:34Z"
+    },
+    {
+      "id": "rv-08-ongebruikte-assets",
+      "title": "OPRUIMEN: 11 ongebruikte bestanden in assets/, samen ~3,4 MB van de 5 MB: cartoonpfp3.png (1,3M), portrait.png (612K), portrait-front.png (432K), cartoon-cutout.png (324K), portrait-cutout.png (292K), screen-calender.png, screen-potje.png, foto.jpg, background1.jpg, catdoodle.png, cursor-hand-open.png. Nakijken wat weg mag voor de deploy",
+      "status": "todo",
+      "group": "opruimen",
+      "color": "#6B6459",
+      "createdAt": "2026-07-26T01:14:34Z",
+      "updatedAt": "2026-07-26T01:14:34Z"
+    },
+    {
+      "id": "rv-09-dubbele-css",
+      "title": "OPRUIMEN: dubbele en dode CSS. .intro staat twee keer (r82 en r94), .about-grid staat twee keer waarbij de tweede de grid-template-columns van de eerste volledig overschrijft (r215 en r218), en .proj-layout in de mobiel-mediaquery (r548) bestaat niet meer in de HTML",
+      "status": "todo",
+      "group": "opruimen",
+      "color": "#6B6459",
+      "createdAt": "2026-07-26T01:14:34Z",
+      "updatedAt": "2026-07-26T01:14:34Z"
+    },
+    {
+      "id": "rv-10-switch-mobiel",
+      "title": "UI: de Nintendo Switch op Contact loopt over op mobiel. BEVESTIGD op 375px (opgemeten in de browser): het tabletscherm is 167px breed (104-271px) maar de drie tegels lopen door tot 365px. Tegel 1 (bericht) valt binnen het scherm, tegel 2 (mail) steekt eruit en tegel 3 ligt er volledig buiten, bovenop de rechter joy-con. Twee van de drie contactopties zijn op een telefoon dus niet bruikbaar. .switch is een 3-koloms grid met vaste joy-cons van 84px; joy-cons meeschalen of onder 480px verbergen en de tegels in het scherm houden",
+      "status": "todo",
+      "group": "ui",
+      "color": "#F0A84B",
+      "createdAt": "2026-07-26T01:14:34Z",
+      "updatedAt": "2026-07-26T01:22:00Z"
+    },
+    {
+      "id": "rv-11-alt-teksten",
+      "title": "UI/toegankelijkheid: about-2.png en about-3.png hebben alt=\"Placeholder\". Screenreaders lezen dat letterlijk voor. Beschrijvende alt-tekst geven zodra de echte foto's er zijn, of alt=\"\" als ze puur decoratief blijven",
+      "status": "todo",
+      "group": "ui",
+      "color": "#F0A84B",
+      "createdAt": "2026-07-26T01:14:34Z",
+      "updatedAt": "2026-07-26T01:14:34Z"
+    },
+    {
+      "id": "a1e10001-0000-4000-8000-andromeda0001",
+      "title": "IDEE: zet V4 home + contact nu live op een tijdelijk Vercel-domein, ook al zijn About en Projects nog niet af. Vier ontwerprondes en nog geen enkele bezoeker. Een deelbare link levert nu meer op dan een perfecte Projects-pagina; de rest kan er later bij",
+      "status": "todo",
+      "group": "idee",
+      "color": "#C05B2E",
+      "createdAt": "2026-07-26T01:13:06Z",
+      "updatedAt": "2026-07-26T01:13:06Z"
+    },
+    {
+      "id": "a1e10002-0000-4000-8000-andromeda0002",
+      "title": "IDEE: de site vertelt nog nergens WAT je verkoopt. Doel is klanten binnenhalen als freelancer (websites voor eenmanszaken), maar er is geen dienstenblok, geen aanpak/proces, geen prijsindicatie en geen duidelijke CTA. 'Junior Developer' als badge verkoopt richting klanten ook niet. Grootste gat voor het freelance-doel",
+      "status": "todo",
+      "group": "idee",
+      "color": "#C05B2E",
+      "createdAt": "2026-07-26T01:13:06Z",
+      "updatedAt": "2026-07-26T01:13:06Z"
+    },
+    {
+      "id": "a1e10003-0000-4000-8000-andromeda0003",
+      "title": "IDEE: maak van ChoreShare.nl een echte case study (probleem, aanpak, keuzes, resultaat) in plaats van een thumb in een grid. Weegt zowel bij klanten als bij stagebegeleiders zwaarder dan een mooie projectenweergave",
+      "status": "todo",
+      "group": "idee",
+      "color": "#C05B2E",
+      "createdAt": "2026-07-26T01:13:06Z",
+      "updatedAt": "2026-07-26T01:13:06Z"
+    },
+    {
+      "id": "a1e10004-0000-4000-8000-andromeda0004",
+      "title": "IDEE: patroon in de afgekeurde ontwerpen. Elke ronde was een geleende metafoor-container (bioscoop, streamingplatform, projectenbol, retro CRT, carousel, Switch). Wat wel steeds bleef staan is je eigen line-art/cartoon-taal. Voorstel volgende ronde: About en Projects bouwen IN die taal in plaats van er een nieuw thema omheen te zetten",
+      "status": "todo",
+      "group": "idee",
+      "color": "#C05B2E",
+      "createdAt": "2026-07-26T01:13:06Z",
+      "updatedAt": "2026-07-26T01:13:06Z"
+    },
+    {
+      "id": "a1e10005-0000-4000-8000-andromeda0005",
+      "title": "IDEE: voor het stage-doel ontbreken een CV-download en links naar LinkedIn/GitHub op een vindbare plek. Nu staat GitHub alleen op de contactpagina",
+      "status": "todo",
+      "group": "idee",
+      "color": "#C05B2E",
+      "createdAt": "2026-07-26T01:13:06Z",
+      "updatedAt": "2026-07-26T01:13:06Z"
+    },
+    {
+      "id": "a1e10006-0000-4000-8000-andromeda0006",
+      "title": "IDEE: analytics meenemen bij de launch (Vercel Analytics of Plausible). Zonder meting weet je niet of de site bezoekers oplevert of waar ze afhaken",
+      "status": "todo",
+      "group": "idee",
+      "color": "#C05B2E",
+      "createdAt": "2026-07-26T01:13:06Z",
+      "updatedAt": "2026-07-26T01:13:06Z"
+    },
+    {
+      "id": "a1e10007-0000-4000-8000-andromeda0007",
+      "title": "BUG: de subpagina's staan alleen buiten beeld geschoven, niet uitgeschakeld (geen inert/visibility/aria-hidden). Een toetsenbordgebruiker tabt vanaf home zo de onzichtbare About/Projects/Contact in, inclusief de formuliervelden. Fix: inert aan/uit zetten bij openCircle en sluiten",
+      "status": "todo",
+      "group": "bug",
+      "color": "#D14343",
+      "createdAt": "2026-07-26T01:13:06Z",
+      "updatedAt": "2026-07-26T01:13:06Z"
+    },
+    {
+      "id": "a1e10008-0000-4000-8000-andromeda0008",
+      "title": "BUG: als GSAP van de CDN niet laadt (adblocker, offline, cdnjs plat) blijft alles met .rv op opacity:0 staan en is de pagina leeg. Fix: integrity/SRI-hash op de script-tag plus een onerror-fallback die .rv zichtbaar zet, eventueel @media (scripting: none)",
+      "status": "todo",
+      "group": "bug",
+      "color": "#D14343",
+      "createdAt": "2026-07-26T01:13:06Z",
+      "updatedAt": "2026-07-26T01:13:06Z"
+    },
+    {
+      "id": "a1e10009-0000-4000-8000-andromeda0009",
+      "title": "BUG: geen prefers-reduced-motion-ondersteuning. Pixel trail, muis-parallax, oogbeweging, spiraal-morph, click sparks en BlurFade draaien ook voor bezoekers die bewegingsreductie aan hebben staan",
+      "status": "todo",
+      "group": "bug",
+      "color": "#D14343",
+      "createdAt": "2026-07-26T01:13:06Z",
+      "updatedAt": "2026-07-26T01:13:06Z"
+    },
+    {
+      "id": "a1e10010-0000-4000-8000-andromeda0010",
+      "title": "UI: het contactformulier geeft alleen terugkoppeling via het knoplabel (Versturen.../Verstuurd!), zonder aria-live en zonder zichtbare foutmelding. Mislukt het versturen, dan springt de browser meteen naar mailto zonder uitleg",
+      "status": "todo",
+      "group": "ui",
+      "color": "#F0A84B",
+      "createdAt": "2026-07-26T01:13:06Z",
+      "updatedAt": "2026-07-26T01:13:06Z"
+    },
+    {
+      "id": "a1e10011-0000-4000-8000-andromeda0011",
+      "title": "UI: korte desktopvensters nog niet nagekeken (bijv. 1366x768 laptop). Body staat op overflow hidden en de panels zijn 100vh, dus content die niet past valt weg in plaats van te scrollen",
+      "status": "todo",
+      "group": "ui",
+      "color": "#F0A84B",
+      "createdAt": "2026-07-26T01:13:06Z",
+      "updatedAt": "2026-07-26T01:13:06Z"
+    },
+    {
+      "id": "a1e10012-0000-4000-8000-andromeda0012",
+      "title": "INFRA: geen favicon, apple-touch-icon of theme-color. Wie de link deelt of opslaat ziet een leeg tabblad-icoon. Het cartoon-hoofd is hier een logische bron",
+      "status": "todo",
+      "group": "infra",
+      "color": "#3B7A8C",
+      "createdAt": "2026-07-26T01:13:06Z",
+      "updatedAt": "2026-07-26T01:13:06Z"
+    },
+    {
+      "id": "a1e10013-0000-4000-8000-andromeda0013",
+      "title": "INFRA: beelden zijn zwaar en ongeoptimaliseerd. cartoon.png is 665 KB en wordt ook gebruikt als 40px-avatar op Contact en als projectthumb, cartoon-eyes.png is nog eens 661 KB. Geen WebP/AVIF, geen width/height (layout shift), geen loading/decoding-attributen",
+      "status": "todo",
+      "group": "infra",
+      "color": "#3B7A8C",
+      "createdAt": "2026-07-26T01:13:06Z",
+      "updatedAt": "2026-07-26T01:13:06Z"
+    },
+    {
+      "id": "a1e10014-0000-4000-8000-andromeda0014",
+      "title": "INFRA: voor de deploy ontbreken nog robots.txt, sitemap.xml, een 404-pagina en een OG-afbeelding. Sluit aan op de bestaande SEO-taak",
+      "status": "todo",
+      "group": "infra",
+      "color": "#3B7A8C",
+      "createdAt": "2026-07-26T01:13:06Z",
+      "updatedAt": "2026-07-26T01:13:06Z"
+    },
+    {
+      "id": "a1e10015-0000-4000-8000-andromeda0015",
+      "title": "OPRUIMEN: assets-map nakijken op ongebruikte bestanden. Kandidaten: cartoonpfp3.png (1,2 MB), portrait.png, portrait-front.png, cartoon-cutout.png, background1.jpg, foto.jpg, cursor-hand-open.png en de drie ChoreShare-screenshots",
+      "status": "todo",
+      "group": "opruimen",
+      "color": "#6B6459",
+      "createdAt": "2026-07-26T01:13:06Z",
+      "updatedAt": "2026-07-26T01:13:06Z"
+    },
+    {
       "id": "9b677333-ce37-46eb-a661-c73aa4c36630",
       "title": "Alles van 25 jul staat ONGECOMMIT in hero-concept.html. Wel goedgekeurd: eyes-follow-cursor, pixel trail terug (alleen home), BlurFade op de hero-tekst, dock zonder pop, skills-pagina weg. Niet goedgekeurd: About en Projects.",
       "status": "todo",

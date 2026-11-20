@@ -30,6 +30,21 @@ Persoonlijke portfolio- en bedrijfssite in één. Doel: klanten binnenhalen als 
 - Merts schets voor V4: `~/OneDrive/Afbeeldingen/paintexample.jpg`
 - Lokaal testen: `python -m http.server 8991` in de projectroot, dan http://localhost:8991/hero-concept.html (Chrome-extensie kan geen file:// openen)
 
+## PEAK-RONDE 11 nov (Fable 5.2, carte blanche van Mert, NOG NIET DOOR MERT BEOORDEELD, niet gecommit)
+
+Dit is de actuele stand van `hero-concept.html` (volledig herschreven, ~1740 regels). Oudere notities hieronder over de carousel, de img-sphere, de trail-canvassen per panel en de dode taalknoppen zijn hiermee achterhaald. Goedgekeurde onderdelen zijn ongemoeid gelaten: cursor, palet, Comic Sans, hero-teksten, doodles, pixel trail, ogen, parallax, dock, circle-reveal met spiraal-morph, click sparks, BlurFade, Switch.
+
+- PRELOADER: inkt-scherm met teller (loopt tot 86, wacht op window load, dan 100) en opent als cirkel vanuit Merts bril. Het gat is een radial-gradient MASK op #loader (vars --lr/--lx/--ly), geen clip-path
+- HOME: naam op 1 regel (nowrap; grid-kolommen zijn nu minmax(0,1fr), anders duwt de naam de portrait uit het midden). Het sterretje (asterisk-teken) nergens gebruiken: het lijkt op het Claude-logo, Mert wil dat niet. Nieuw: een ronddraaiende sticker "beschikbaar voor freelance" naast het hoofd die Contact opent
+- ABOUT: de cartoon voor een amber zon (.fig-blob), rechts de drie vaste alinea's, "route" met vier grepen (MBO, HBO-ICT, Freelance, ChoreShare) en drie chips. De overgang van cartoon naar echte foto (hover/schakelaar) is gebouwd en op Merts verzoek weer VERWIJDERD, inclusief assets/mert-foto.webp
+- ACHTERGROND PER PAGINA (Merts wens: elke pagina iets unieks): home = reuzenletters in omlijning die langs schuiven (.bgtype, tekst nu "websites • webapps • apps"; Mert vond het effect goed maar niet "developer/designer/maker"), about = zwevende lijntekeningen (.bg-doodles, muis-parallax via data-d), projects = ruitjespapier van stippen met terracotta lichtvlek onder de cursor (.bg-grid, vars --mx/--my), contact = schuivend patroon van controllerknoppen (.bg-pad, SVG data-URI)
+- PROJECTS: OVERZICHT (Merts feedback 11 nov: het game-menu met kaartenstapel was clean maar hij wil alles naast elkaar zien). Kop "Wat ik heb gemaakt." met vier vierkante tegels naast elkaar (.pgrid, auto-fit minmax 204px; om en om 1.6 graden scheef, recht en omhoog bij hover) en eronder titel, soort, beschrijving, tags en een knop of status. Data in PROJECTEN (NL en EN): `link: { href, nl, en }` maakt tegel en knop klikbaar, anders toont hij `status`. Nu heeft alleen Portfolio een link (publieke GitHub-repo). Echte screenshots: proj-choreshare-app/-site, proj-andromeda, proj-portfolio (.webp)
+- CONTACT: Switch ongewijzigd qua ontwerp. Nieuw: joy-cons schuiven op de rail, scherm springt aan, tegels poppen. Mobiel: joy-cons worden smalle randen, scherm hoger. Het formulier vult het hele Switch-scherm (flex-kolom, berichtveld rekt mee) en heeft action/method, zichtbare status (aria-live) en een mailto-link bij een fout
+- NL/EN WERKT: woordenboek T in de JS, data-i18n / data-i18n-ph / data-i18n-aria, keuze in localStorage. Koppen met data-split worden na elke taalwissel opnieuw in woorden geknipt
+- Techniek: GSAP via cdnjs met SRI plus lokale fallback `assets/vendor/gsap.min.js`; inert op panels buiten beeld; b-toets telt niet in formuliervelden; prefers-reduced-motion (timeScale 30, geen trail/parallax/ogen/sparks/loader); trail-loop draait alleen zolang er blokjes leven; cartoon als .webp (90 KB i.p.v. 680 KB), `assets/avatar.webp` voor favicon en Switch-avatar; --gutter (JS) houdt op subpagina's de strook rond de terugknop vrij; op mobiel verhuist de terugknop na het openen naar de hoek rechtsboven
+- choreshare.nl staat NIET live (Hostnet-parkeerpagina, https-certificaatfout): de tegel toont de status "Binnenkort live" in plaats van een link
+- Testen: browser cachet hero-concept.html hard, altijd met ?v=iets laden
+
 ## Status en richting
 
 - V1 was een te letterlijke kopie van dennissnellenberg.nl. Afgekeurd door Mert
@@ -49,6 +64,7 @@ Persoonlijke portfolio- en bedrijfssite in één. Doel: klanten binnenhalen als 
 
 ## Vaste content (door Mert aangeleverd, niet herschrijven)
 
+- HERO-BIO HERZIEN 11 nov (Mert vond de oude "Ik zet ideeën om in digitale oplossingen..." te AI klinken en wil dat het over hem gaat, met MBO en HBO): "27, uit Arnhem. Begonnen op het MBO met applicatieontwikkeling, nu derdejaars HBO-ICT in Utrecht. Ik bouw websites en apps, en ontwerp ze het liefst zelf." De rest van de hero-opbouw hieronder geldt nog
 - V4 hero (herzien 15 jul, tweede ronde): geen "Portfolio" eyebrow meer, naam "Mert Altintas" op EEN regel (Altintas in terracotta), daaronder "Ik zet ideeën om in digitale oplossingen. Met een passie voor development, design en gebruiksvriendelijke interfaces.", dan de "Junior Developer" badge, dan Arnhem, NL. De oude 27/HBO-ICT/boulderen-bio is voor de About-pagina, niet de hero
 - About: titel NL "Ik ben Mert." / EN "I'm Mert." plus drie vaste alinea's (staan in js/main.js onder about.p1 t/m about.p3) — herbruikbaar voor de About-pagina van V4
 

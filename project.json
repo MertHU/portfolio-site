@@ -1,6 +1,6 @@
 {
   "name": "Portfolio Site",
-  "description": "Personal portfolio website.",
+  "description": "Portfolio- en bedrijfssite in één: klanten binnenhalen als freelance designer en developer (websites voor eenmanszaken), en later een developer-portfolio voor stages en werk. Eén HTML-bestand met GSAP, tweetalig NL/EN.",
   "commands": [
     "python -m http.server 8991"
   ],
